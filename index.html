@@ -342,11 +342,11 @@
         </button>
       </form>
 
-      <!-- TELA DE VALIDAÇÃO E PREENCHIMENTO COMPLETO (DIRETO) -->
+      <!-- TELA DE VALIDAÇÃO E PREENCHIMENTO COMPLETO -->
       <form id="formValidacaoCompleta" onsubmit="salvarCadastroFinal(event)" class="space-y-3 hidden">
         <div class="bg-brand-500/10 border border-brand-500/30 p-3 rounded-xl mb-4 text-xs text-brand-400 flex items-center gap-2">
           <i class="fa-solid fa-circle-info text-lg"></i>
-          <span>Revise seus dados básicos e preencha o endereço para concluir o cadastro no Supabase.</span>
+          <span>Revise seus dados e preencha o endereço para concluir o cadastro no Supabase.</span>
         </div>
 
         <div>
@@ -439,7 +439,7 @@
 
   <!-- ================= SCRIPTS JS ================= -->
   <script>
-    // Configurações do Supabase
+    // Configurações do Supabase (Substitua pelas suas chaves reais do painel)
     const SUPABASE_URL = "https://SEU_PROJETO.supabase.co"; 
     const SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_PUBLIC";
     
@@ -449,8 +449,6 @@
         supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       }
     } catch(e) { console.log("Supabase aguardando inicialização"); }
-
-    let dadosTemporarios = null;
 
     function openAuthModal(tab = 'login') {
       document.getElementById('authModal').classList.remove('hidden');
@@ -513,7 +511,6 @@
       }
     }
 
-    // Ao logar com Google, vai direto para a tela de preenchimento/validação preenchida
     async function handleGoogleLogin() {
       showAlert("Conectando com o Google...", "info");
       
@@ -525,8 +522,7 @@
         if (error) showAlert("Erro ao conectar com Google: " + error.message, "error");
       } else {
         setTimeout(() => {
-          // Preenche com dados simulados do Google
-          document.getElementById('valCompany').value = "Meu Restaurante Google";
+          document.getElementById('valCompany').value = "Meu Estabelecimento Google";
           document.getElementById('valCpfCnpj').value = "00.000.000/0001-00";
           document.getElementById('valPhone').value = "(31) 99999-9999";
           document.getElementById('valSegment').value = "Restaurante";
@@ -559,7 +555,6 @@
       }
     }
 
-    // Avança do cadastro inicial para a tela de validação/preenchimento completo
     function avancarParaValidacao(e) {
       e.preventDefault();
 
@@ -568,7 +563,6 @@
         segment = document.getElementById('regTypeOther').value;
       }
 
-      // Copia os dados digitados para a tela de validação
       document.getElementById('valCompany').value = document.getElementById('regCompany').value;
       document.getElementById('valCpfCnpj').value = document.getElementById('regCpfCnpj').value;
       document.getElementById('valPhone').value = document.getElementById('regPhone').value;
@@ -588,11 +582,11 @@
       showAlert("", "hidden");
     }
 
-    // Salva definitivamente todos os campos na tabela 'clientes_estabelecimentos' do Supabase
+    // Função que insere todos os dados preenchidos na tabela 'clientes_estabelecimentos' do Supabase
     async function salvarCadastroFinal(e) {
       e.preventDefault();
 
-      const dadosFinais = {
+      const dadosParaSalvar = {
         nome_estabelecimento: document.getElementById('valCompany').value,
         cpf_cnpj: document.getElementById('valCpfCnpj').value,
         telefone: document.getElementById('valPhone').value,
@@ -607,20 +601,20 @@
         criado_em: new Date().toISOString()
       };
 
-      showAlert("Salvando cadastro completo no Supabase...", "info");
+      showAlert("Salvando dados no Supabase...", "info");
 
       if (supabaseClient) {
         const { error } = await supabaseClient
           .from('clientes_estabelecimentos')
-          .insert([dadosFinais]);
+          .insert([dadosParaSalvar]);
 
         if (error) {
-          showAlert("Erro ao salvar no banco: " + error.message, "error");
+          showAlert("Erro ao salvar no Supabase: " + error.message, "error");
           return;
         }
       }
 
-      showAlert("✅ Cadastro validado e salvo com sucesso!", "success");
+      showAlert("✅ Cadastro validado e salvo com sucesso no banco de dados!", "success");
       setTimeout(() => {
         closeAuthModal();
       }, 2000);
