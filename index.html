@@ -52,7 +52,6 @@
   <!-- ================= NAVBAR ================= -->
   <header class="sticky top-0 z-50 glass-card border-b border-slate-800/80">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-      <!-- Logo SmartComanda -->
       <a href="#" class="flex items-center gap-3 group">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-slate-950 font-bold text-xl shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform">
           <i class="fa-solid fa-utensils"></i>
@@ -65,20 +64,11 @@
         </div>
       </a>
 
-      <!-- Menu de Navegação -->
-      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-        <a href="#recursos" class="hover:text-brand-400 transition-colors">Recursos</a>
-        <a href="#lucratividade" class="hover:text-brand-400 transition-colors">Foco em Lucro</a>
-        <a href="#planos" class="hover:text-brand-400 transition-colors">Planos</a>
-        <a href="#contato" class="hover:text-brand-400 transition-colors">Contato</a>
-      </nav>
-
-      <!-- Botões de Ação rápidas -->
       <div class="flex items-center gap-3">
         <button onclick="openAuthModal('login')" class="text-sm font-semibold text-slate-300 hover:text-white px-4 py-2 rounded-lg transition-colors">
           Entrar
         </button>
-        <button onclick="openAuthModal('register')" class="bg-gradient-to-r from-brand-500 to-emerald-400 hover:from-brand-600 hover:to-emerald-500 text-slate-950 font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 transition-all transform hover:-translate-y-0.5">
+        <button onclick="openAuthModal('register')" class="bg-gradient-to-r from-brand-500 to-emerald-400 hover:from-brand-600 hover:to-emerald-500 text-slate-950 font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-brand-500/25 transition-all">
           Testar Grátis
         </button>
       </div>
@@ -91,139 +81,23 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="grid lg:grid-cols-12 gap-12 items-center">
-        
-        <!-- Texto Principal Comercial -->
         <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold tracking-wide">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold">
             <span class="flex h-2 w-2 rounded-full bg-brand-400 animate-ping"></span>
             Revolução na Gestão do seu Restaurante
           </div>
-
           <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
             Aumente o faturamento e acabe com os <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-emerald-300">desperdícios</span> do seu estabelecimento.
           </h1>
-
           <p class="text-lg text-slate-400 max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
-            O SmartComanda unifica o controle de mesas, comanda virtual em tempo real e análise inteligente de custos dos pratos em uma única plataforma web integrada ao ecossistema <b class="text-slate-200">EconoTechBI</b>.
+            O SmartComanda unifica o controle de mesas, comanda virtual em tempo real e análise inteligente de custos dos pratos em uma única plataforma web integrada.
           </p>
-
-          <!-- CTAs -->
           <div class="pt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-            <button onclick="openAuthModal('register')" class="w-full sm:w-auto bg-brand-500 hover:bg-brand-400 text-slate-950 font-extrabold text-base px-8 py-4 rounded-xl shadow-xl shadow-brand-500/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-3">
+            <button onclick="openAuthModal('register')" class="w-full sm:w-auto bg-brand-500 hover:bg-brand-400 text-slate-950 font-extrabold text-base px-8 py-4 rounded-xl shadow-xl transition-all flex items-center justify-center gap-3">
               <span>Cadastrar meu Estabelecimento</span>
               <i class="fa-solid fa-arrow-right"></i>
             </button>
-            <a href="#recursos" class="w-full sm:w-auto border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white font-semibold text-base px-8 py-4 rounded-xl transition-all flex items-center justify-center gap-2">
-              <i class="fa-solid fa-circle-play text-brand-400"></i>
-              Ver Funcionalidades
-            </a>
           </div>
-
-          <!-- Estatísticas rápidas -->
-          <div class="pt-8 border-t border-slate-800/80 grid grid-cols-3 gap-4 text-center lg:text-left">
-            <div>
-              <div class="text-2xl font-bold text-white">+35%</div>
-              <div class="text-xs text-slate-400">Giro de Mesas</div>
-            </div>
-            <div>
-              <div class="text-2xl font-bold text-white">0%</div>
-              <div class="text-xs text-slate-400">Erros de Pedidos</div>
-            </div>
-            <div>
-              <div class="text-2xl font-bold text-white">100%</div>
-              <div class="text-xs text-slate-400">Nuvem & Seguro</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card de Apresentação / Preview do App -->
-        <div class="lg:col-span-5">
-          <div class="glass-card rounded-3xl p-6 shadow-2xl relative border border-slate-800">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-6">
-              <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-rose-500"></span>
-                <span class="w-3 h-3 rounded-full bg-amber-500"></span>
-                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-              </div>
-              <span class="text-xs font-mono text-slate-400">SmartComanda WebApp v2.5</span>
-            </div>
-
-            <div class="space-y-4">
-              <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <div class="w-12 h-12 rounded-xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-center text-brand-400 font-bold text-lg">
-                    M 04
-                  </div>
-                  <div>
-                    <h4 class="font-bold text-white text-sm">Mesa 04 - Família Silva</h4>
-                    <p class="text-xs text-slate-400">3 Itens em preparo • R$ 142,00</p>
-                  </div>
-                </div>
-                <span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[11px] font-semibold rounded-lg">
-                  Cozinha
-                </span>
-              </div>
-
-              <div class="bg-gradient-to-br from-slate-900 to-brand-950/40 rounded-2xl p-4 border border-brand-500/20 flex items-center justify-between">
-                <div>
-                  <div class="text-xs text-brand-400 font-semibold uppercase tracking-wider">Análise EconoTechBI</div>
-                  <div class="text-sm font-bold text-white mt-0.5">Margem Média dos Pratos</div>
-                </div>
-                <div class="text-right">
-                  <div class="text-xl font-extrabold text-brand-400">68.4%</div>
-                  <div class="text-[10px] text-slate-400">Lucro Bruto Real</div>
-                </div>
-              </div>
-            </div>
-
-            <button onclick="openAuthModal('register')" class="w-full mt-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
-              <i class="fa-solid fa-rocket text-brand-400"></i>
-              Experimente no seu Restaurante
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= SEÇÃO DE RECURSOS ================= -->
-  <section id="recursos" class="py-20 bg-slate-900/50 border-t border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-3xl mx-auto mb-16">
-        <h2 class="text-xs font-mono text-brand-400 tracking-widest uppercase mb-2">Recursos Inteligentes</h2>
-        <p class="text-3xl font-extrabold text-white sm:text-4xl">Desenvolvido sob medida para a agilidade do seu salão e cozinha</p>
-      </div>
-
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-brand-500/50 transition-all group">
-          <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 text-2xl mb-5 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-mobile-screen-button"></i>
-          </div>
-          <h3 class="text-xl font-bold text-white mb-2">Comanda Digital e Garçom</h3>
-          <p class="text-slate-400 text-sm leading-relaxed">
-            Pedidos lançados diretamente na mesa pelo celular ou tablet e enviados instantaneamente para a cozinha.
-          </p>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-brand-500/50 transition-all group">
-          <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 text-2xl mb-5 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-chart-line"></i>
-          </div>
-          <h3 class="text-xl font-bold text-white mb-2">Cálculo de Margem e Insumos</h3>
-          <p class="text-slate-400 text-sm leading-relaxed">
-            Monitore o custo dos ingredientes de cada prato e saiba exatamente a lucratividade de cada item do seu cardápio.
-          </p>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-brand-500/50 transition-all group">
-          <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 text-2xl mb-5 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-database"></i>
-          </div>
-          <h3 class="text-xl font-bold text-white mb-2">Banco de Dados Unificado</h3>
-          <p class="text-slate-400 text-sm leading-relaxed">
-            Integração nativa com Supabase e dashboards da consultoria EconoTechBI para decisões estratégicas.
-          </p>
         </div>
       </div>
     </div>
@@ -233,12 +107,10 @@
   <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
     <div class="bg-slate-900 border border-slate-800 w-full max-w-xl rounded-3xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
       
-      <!-- Botão Fechar -->
-      <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/50 transition-colors">
+      <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white w-8 h-8 flex items-center justify-center rounded-full bg-slate-800/50">
         <i class="fa-solid fa-xmark"></i>
       </button>
 
-      <!-- Cabeçalho do Modal -->
       <div class="text-center mb-6">
         <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 mb-3 text-xl">
           <i class="fa-solid fa-utensils"></i>
@@ -247,200 +119,145 @@
         <p id="modalSubtitle" class="text-xs text-slate-400 mt-1">Entre com as credenciais do seu estabelecimento</p>
       </div>
 
-      <!-- Alternador entre Aba Login e Cadastro -->
       <div id="authTabsContainer" class="grid grid-cols-2 bg-slate-950 p-1 rounded-xl mb-6 border border-slate-800">
-        <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="py-2 text-xs font-bold rounded-lg transition-all text-white bg-slate-800 shadow">
-          Já sou Cliente (Login)
-        </button>
-        <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">
-          Cadastrar Novo
-        </button>
+        <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="py-2 text-xs font-bold rounded-lg transition-all text-white bg-slate-800 shadow">Entrar</button>
+        <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">Cadastrar Novo</button>
       </div>
 
-      <!-- BOTÃO DE LOGIN / CADASTRO VIA GOOGLE -->
       <div id="googleAuthSection" class="mb-5">
-        <button type="button" onclick="handleGoogleLogin()" class="w-full bg-slate-950 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold py-2.5 px-4 rounded-xl transition duration-200 text-sm flex items-center justify-center gap-3">
-          <svg class="w-4 h-4" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          <span id="googleBtnText">Entrar com o Google</span>
+        <button type="button" onclick="handleGoogleLogin()" class="w-full bg-slate-950 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold py-2.5 px-4 rounded-xl text-sm flex items-center justify-center gap-3">
+          <i class="fa-brands fa-google text-brand-400"></i> Entrar com o Google
         </button>
-
-        <div class="relative my-4">
-          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-800"></div></div>
-          <div class="relative flex justify-center text-xs uppercase"><span class="bg-slate-900 px-2 text-slate-500 font-mono">ou e-mail</span></div>
-        </div>
       </div>
 
       <!-- FORMULÁRIO DE LOGIN -->
       <form id="formLogin" onsubmit="handleLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">E-mail corporativo *</label>
-          <input type="email" id="loginEmail" required placeholder="seu@restaurante.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+          <input type="email" id="loginEmail" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Senha *</label>
-          <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+          <input type="password" id="loginPassword" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-brand-500">
         </div>
-        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold py-3 px-4 rounded-xl transition duration-200 text-sm shadow-lg shadow-brand-500/20">
-          Entrar no Sistema
-        </button>
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold py-3 px-4 rounded-xl text-sm shadow-lg">Entrar</button>
       </form>
 
       <!-- FORMULÁRIO DE CADASTRO INICIAL -->
       <form id="formRegister" onsubmit="avancarParaValidacao(event)" class="space-y-3 hidden">
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Nome do Estabelecimento *</label>
-          <input type="text" id="regCompany" required placeholder="Ex: Bar & Grill Central" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+          <input type="text" id="regCompany" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
         </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">CPF ou CNPJ *</label>
-            <input type="text" id="regCpfCnpj" required placeholder="00.000.000/0001-00" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="regCpfCnpj" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Telefone *</label>
-            <input type="tel" id="regPhone" required placeholder="(31) 99999-9999" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="tel" id="regPhone" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
         </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Segmento</label>
-            <select id="regType" onchange="toggleOtherSegment(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
-              <option value="">Selecione...</option>
-              <option value="Restaurante">Restaurante</option>
-              <option value="Bar/Pub">Bar/Pub</option>
-              <option value="Lanchonete">Lanchonete</option>
-              <option value="Padaria">Padaria</option>
-              <option value="Outros">Outros</option>
-            </select>
-          </div>
-          <div id="otherSegmentContainer" class="hidden">
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Especifique o Segmento</label>
-            <input type="text" id="regTypeOther" placeholder="Ex: Açaí, Bistrô..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
-          </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Segmento</label>
+          <select id="regType" onchange="toggleOtherSegment(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
+            <option value="">Selecione...</option>
+            <option value="Restaurante">Restaurante</option>
+            <option value="Bar/Pub">Bar/Pub</option>
+            <option value="Lanchonete">Lanchonete</option>
+            <option value="Padaria">Padaria</option>
+            <option value="Outros">Outros</option>
+          </select>
         </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div id="otherSegmentContainer" class="hidden">
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Especifique o Segmento</label>
+          <input type="text" id="regTypeOther" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">E-mail do Administrador *</label>
-            <input type="email" id="regEmail" required placeholder="admin@empresa.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="email" id="regEmail" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Crie uma Senha Segura *</label>
-            <input type="password" id="regPassword" minlength="6" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Senha *</label>
+            <input type="password" id="regPassword" minlength="6" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
         </div>
-
-        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold py-3 px-4 rounded-xl transition duration-200 text-sm shadow-lg shadow-brand-500/25 mt-4">
-          Continuar para Validação e Endereço <i class="fa-solid fa-arrow-right ml-1"></i>
-        </button>
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold py-3 px-4 rounded-xl text-sm mt-4">Continuar <i class="fa-solid fa-arrow-right ml-1"></i></button>
       </form>
 
-      <!-- TELA DE VALIDAÇÃO E PREENCHIMENTO COMPLETO -->
+      <!-- TELA DE VALIDAÇÃO E ENDEREÇO -->
       <form id="formValidacaoCompleta" onsubmit="salvarCadastroFinal(event)" class="space-y-3 hidden">
-        <div class="bg-brand-500/10 border border-brand-500/30 p-3 rounded-xl mb-4 text-xs text-brand-400 flex items-center gap-2">
-          <i class="fa-solid fa-circle-info text-lg"></i>
-          <span>Revise seus dados e preencha o endereço para concluir o cadastro no Supabase.</span>
+        <div class="bg-brand-500/10 border border-brand-500/30 p-3 rounded-xl mb-4 text-xs text-brand-400">
+          <i class="fa-solid fa-circle-info mr-1"></i> Preencha o endereço para concluir o cadastro no banco de dados.
         </div>
-
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Nome do Estabelecimento *</label>
-          <input type="text" id="valCompany" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+          <input type="text" id="valCompany" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
         </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">CPF ou CNPJ *</label>
-            <input type="text" id="valCpfCnpj" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="valCpfCnpj" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Telefone *</label>
-            <input type="tel" id="valPhone" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="tel" id="valPhone" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
         </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Segmento</label>
-            <input type="text" id="valSegment" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="valSegment" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">E-mail do Administrador *</label>
-            <input type="email" id="valEmail" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="email" id="valEmail" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
         </div>
-
         <hr class="border-slate-800 my-2">
-        <p class="text-[11px] font-mono uppercase tracking-wider text-brand-400">Endereço do Estabelecimento</p>
-
         <div class="grid grid-cols-3 gap-2">
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">CEP</label>
-            <input type="text" id="valCep" placeholder="00000-000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="valCep" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-slate-300 mb-1">Cidade</label>
-            <input type="text" id="valCidade" placeholder="Ex: Belo Horizonte" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="valCidade" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
         </div>
-
         <div class="grid grid-cols-3 gap-2">
           <div class="col-span-2">
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Logradouro (Rua/Av)</label>
-            <input type="text" id="valLogradouro" placeholder="Ex: Av. Afonso Pena" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Logradouro</label>
+            <input type="text" id="valLogradouro" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Número</label>
-            <input type="text" id="valNumCasa" placeholder="Ex: 1000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="valNumCasa" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
         </div>
-
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Bairro</label>
-            <input type="text" id="valBairro" placeholder="Ex: Centro" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="valBairro" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Complemento</label>
-            <input type="text" id="valComplemento" placeholder="Ex: Loja 2, Fundos" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="valComplemento" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
         </div>
-
-        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold py-3 px-4 rounded-xl transition duration-200 text-sm shadow-lg shadow-brand-500/25 mt-3">
-          Salvar Dados Definitivos no Supabase
-        </button>
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold py-3 px-4 rounded-xl text-sm mt-3">Salvar no Supabase</button>
       </form>
 
-      <!-- Mensagem de Feedback -->
       <div id="authAlert" class="mt-4 p-3 rounded-xl text-xs font-semibold hidden text-center"></div>
     </div>
   </div>
 
-  <!-- ================= FOOTER ================= -->
-  <footer class="border-t border-slate-800/80 bg-slate-950 py-10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-brand-500/20 border border-brand-500/30 flex items-center justify-center text-brand-400 font-bold text-sm">
-          <i class="fa-solid fa-utensils"></i>
-        </div>
-        <span class="text-sm font-semibold text-slate-300">SmartComanda — EconoTechBI © 2026</span>
-      </div>
-      <div class="text-xs text-slate-500">
-        Hospedado com alta performance na Vercel & Supabase Database.
-      </div>
-    </div>
-  </footer>
-
   <!-- ================= SCRIPTS JS ================= -->
   <script>
-    // Configurações do Supabase (Substitua pelas suas chaves reais do painel)
-    const SUPABASE_URL = "https://SEU_PROJETO.supabase.co"; 
+    // ⚠️ ATENÇÃO: Substitua pelas suas credenciais reais do painel do Supabase (Project Settings > API)
+    const SUPABASE_URL = "https://ubtgyzcdvumfxgujpshz.supabase.co"; 
     const SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_PUBLIC";
     
     let supabaseClient = null;
@@ -448,7 +265,7 @@
       if(SUPABASE_URL.includes("http") && !SUPABASE_URL.includes("SEU_PROJETO")) {
         supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       }
-    } catch(e) { console.log("Supabase aguardando inicialização"); }
+    } catch(e) { console.error("Erro ao iniciar Supabase:", e); }
 
     function openAuthModal(tab = 'login') {
       document.getElementById('authModal').classList.remove('hidden');
@@ -481,8 +298,8 @@
         regForm.classList.add('hidden');
         googleSection.classList.remove('hidden');
         document.getElementById('authTabsContainer').classList.remove('hidden');
-        tabLoginBtn.className = "py-2 text-xs font-bold rounded-lg transition-all text-white bg-slate-800 shadow";
-        tabRegBtn.className = "py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white";
+        tabLoginBtn.className = "py-2 text-xs font-bold rounded-lg text-white bg-slate-800 shadow";
+        tabRegBtn.className = "py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
         modalTitle.innerText = "Acessar o SmartComanda";
         modalSubtitle.innerText = "Entre com as credenciais do seu estabelecimento";
       } else {
@@ -490,17 +307,16 @@
         regForm.classList.remove('hidden');
         googleSection.classList.remove('hidden');
         document.getElementById('authTabsContainer').classList.remove('hidden');
-        tabRegBtn.className = "py-2 text-xs font-bold rounded-lg transition-all text-white bg-slate-800 shadow";
-        tabLoginBtn.className = "py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white";
+        tabRegBtn.className = "py-2 text-xs font-bold rounded-lg text-white bg-slate-800 shadow";
+        tabLoginBtn.className = "py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
         modalTitle.innerText = "Cadastrar Estabelecimento";
-        modalSubtitle.innerText = "Crie sua conta para começar a gerenciar seu salão";
+        modalSubtitle.innerText = "Crie sua conta para começar";
       }
     }
 
     function toggleOtherSegment(value) {
       const otherContainer = document.getElementById('otherSegmentContainer');
       const otherInput = document.getElementById('regTypeOther');
-      
       if (value === 'Outros') {
         otherContainer.classList.remove('hidden');
         otherInput.required = true;
@@ -513,7 +329,6 @@
 
     async function handleGoogleLogin() {
       showAlert("Conectando com o Google...", "info");
-      
       if (supabaseClient) {
         const { error } = await supabaseClient.auth.signInWithOAuth({
           provider: 'google',
@@ -522,12 +337,11 @@
         if (error) showAlert("Erro ao conectar com Google: " + error.message, "error");
       } else {
         setTimeout(() => {
-          document.getElementById('valCompany').value = "Meu Estabelecimento Google";
+          document.getElementById('valCompany').value = "Estabelecimento Google";
           document.getElementById('valCpfCnpj').value = "00.000.000/0001-00";
           document.getElementById('valPhone').value = "(31) 99999-9999";
           document.getElementById('valSegment').value = "Restaurante";
           document.getElementById('valEmail').value = "admin@google.com";
-
           prepararTelaValidacao();
         }, 1000);
       }
@@ -537,7 +351,6 @@
       e.preventDefault();
       const email = document.getElementById('loginEmail').value;
       const password = document.getElementById('loginPassword').value;
-
       showAlert("Autenticando...", "info");
 
       if (supabaseClient) {
@@ -549,15 +362,12 @@
           setTimeout(() => { window.location.href = "cardapio.html"; }, 1500);
         }
       } else {
-        setTimeout(() => {
-          showAlert("✅ Login simulado realizado com sucesso para: " + email, "success");
-        }, 1000);
+        setTimeout(() => { showAlert("Login simulado com sucesso!", "success"); }, 1000);
       }
     }
 
     function avancarParaValidacao(e) {
       e.preventDefault();
-
       let segment = document.getElementById('regType').value;
       if (segment === 'Outros') {
         segment = document.getElementById('regTypeOther').value;
@@ -577,12 +387,12 @@
       document.getElementById('googleAuthSection').classList.add('hidden');
       document.getElementById('authTabsContainer').classList.add('hidden');
       document.getElementById('modalTitle').innerText = "Validação e Endereço";
-      document.getElementById('modalSubtitle').innerText = "Complete os dados complementares do estabelecimento";
+      document.getElementById('modalSubtitle').innerText = "Complete o endereço do estabelecimento";
       document.getElementById('formValidacaoCompleta').classList.remove('hidden');
       showAlert("", "hidden");
     }
 
-    // Função que insere todos os dados preenchidos na tabela 'clientes_estabelecimentos' do Supabase
+    // Função revisada de salvamento com log detalhado no console (F12)
     async function salvarCadastroFinal(e) {
       e.preventDefault();
 
@@ -602,22 +412,34 @@
       };
 
       showAlert("Salvando dados no Supabase...", "info");
+      console.log("Tentando inserir dados:", dadosParaSalvar);
 
-      if (supabaseClient) {
-        const { error } = await supabaseClient
+      if (!supabaseClient) {
+        showAlert("Erro: Cliente Supabase não inicializado. Verifique a URL e a Chave.", "error");
+        return;
+      }
+
+      try {
+        const { data, error } = await supabaseClient
           .from('clientes_estabelecimentos')
           .insert([dadosParaSalvar]);
 
         if (error) {
-          showAlert("Erro ao salvar no Supabase: " + error.message, "error");
+          console.error("Erro retornado pelo Supabase:", error);
+          showAlert("Erro ao salvar: " + error.message, "error");
           return;
         }
-      }
 
-      showAlert("✅ Cadastro validado e salvo com sucesso no banco de dados!", "success");
-      setTimeout(() => {
-        closeAuthModal();
-      }, 2000);
+        console.log("Dados salvos com sucesso:", data);
+        showAlert("✅ Cadastro salvo com sucesso no banco de dados!", "success");
+        setTimeout(() => {
+          closeAuthModal();
+        }, 2000);
+
+      } catch (err) {
+        console.error("Exceção capturada:", err);
+        showAlert("Erro inesperado ao conectar com o banco.", "error");
+      }
     }
 
     function showAlert(msg, type) {
