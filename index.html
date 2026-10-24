@@ -229,7 +229,7 @@
     </div>
   </section>
 
-  <!-- ================= MODAL DE AUTH (LOGIN / CADASTRO) ================= -->
+  <!-- ================= MODAL DE AUTH / VALIDAÇÃO ================= -->
   <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
     <div class="bg-slate-900 border border-slate-800 w-full max-w-xl rounded-3xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
       
@@ -290,8 +290,8 @@
         </button>
       </form>
 
-      <!-- FORMULÁRIO DE CADASTRO COMPLETO -->
-      <form id="formRegister" onsubmit="handleRegister(event)" class="space-y-3 hidden">
+      <!-- FORMULÁRIO DE CADASTRO INICIAL -->
+      <form id="formRegister" onsubmit="avancarParaValidacao(event)" class="space-y-3 hidden">
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Nome do Estabelecimento *</label>
           <input type="text" id="regCompany" required placeholder="Ex: Bar & Grill Central" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
@@ -337,67 +337,85 @@
           </div>
         </div>
 
+        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold py-3 px-4 rounded-xl transition duration-200 text-sm shadow-lg shadow-brand-500/25 mt-4">
+          Continuar para Validação e Endereço <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+      </form>
+
+      <!-- TELA DE VALIDAÇÃO E PREENCHIMENTO COMPLETO (DIRETO) -->
+      <form id="formValidacaoCompleta" onsubmit="salvarCadastroFinal(event)" class="space-y-3 hidden">
+        <div class="bg-brand-500/10 border border-brand-500/30 p-3 rounded-xl mb-4 text-xs text-brand-400 flex items-center gap-2">
+          <i class="fa-solid fa-circle-info text-lg"></i>
+          <span>Revise seus dados básicos e preencha o endereço para concluir o cadastro no Supabase.</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Nome do Estabelecimento *</label>
+          <input type="text" id="valCompany" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">CPF ou CNPJ *</label>
+            <input type="text" id="valCpfCnpj" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Telefone *</label>
+            <input type="tel" id="valPhone" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Segmento</label>
+            <input type="text" id="valSegment" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">E-mail do Administrador *</label>
+            <input type="email" id="valEmail" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+          </div>
+        </div>
+
         <hr class="border-slate-800 my-2">
         <p class="text-[11px] font-mono uppercase tracking-wider text-brand-400">Endereço do Estabelecimento</p>
 
         <div class="grid grid-cols-3 gap-2">
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">CEP</label>
-            <input type="text" id="regCep" placeholder="00000-000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="valCep" placeholder="00000-000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
           </div>
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-slate-300 mb-1">Cidade</label>
-            <input type="text" id="regCidade" placeholder="Ex: Belo Horizonte" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="valCidade" placeholder="Ex: Belo Horizonte" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
           </div>
         </div>
 
         <div class="grid grid-cols-3 gap-2">
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-slate-300 mb-1">Logradouro (Rua/Av)</label>
-            <input type="text" id="regLogradouro" placeholder="Ex: Av. Afonso Pena" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="valLogradouro" placeholder="Ex: Av. Afonso Pena" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Número</label>
-            <input type="text" id="regNumCasa" placeholder="Ex: 1000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="valNumCasa" placeholder="Ex: 1000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Bairro</label>
-            <input type="text" id="regBairro" placeholder="Ex: Centro" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="valBairro" placeholder="Ex: Centro" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Complemento</label>
-            <input type="text" id="regComplemento" placeholder="Ex: Loja 2, Fundos" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="valComplemento" placeholder="Ex: Loja 2, Fundos" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
           </div>
         </div>
 
         <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold py-3 px-4 rounded-xl transition duration-200 text-sm shadow-lg shadow-brand-500/25 mt-3">
-          Criar Minha Conta e Salvar
+          Salvar Dados Definitivos no Supabase
         </button>
       </form>
-
-      <!-- SEÇÃO DE ESCOLHA DE CANAL DE ENVIO DO LINK -->
-      <div id="validationChannelSection" class="hidden space-y-4 py-2 text-center">
-        <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-xl mb-2">
-          <i class="fa-solid fa-circle-check"></i>
-        </div>
-        <h4 class="text-white font-bold text-lg">Cadastro Concluído com Sucesso!</h4>
-        <p class="text-xs text-slate-300">Como você prefere enviar o link de preenchimento e validação para o cliente?</p>
-        
-        <div class="grid grid-cols-2 gap-3 pt-2">
-          <button type="button" onclick="sendValidationLink('email')" class="bg-slate-950 hover:bg-slate-800 border border-slate-700 hover:border-brand-500 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all group">
-            <i class="fa-solid fa-envelope text-brand-400 text-xl group-hover:scale-110 transition-transform"></i>
-            <span class="text-xs font-bold text-white">Por E-mail</span>
-          </button>
-          
-          <button type="button" onclick="sendValidationLink('whatsapp')" class="bg-slate-950 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all group">
-            <i class="fa-brands fa-whatsapp text-emerald-400 text-xl group-hover:scale-110 transition-transform"></i>
-            <span class="text-xs font-bold text-white">Por WhatsApp</span>
-          </button>
-        </div>
-      </div>
 
       <!-- Mensagem de Feedback -->
       <div id="authAlert" class="mt-4 p-3 rounded-xl text-xs font-semibold hidden text-center"></div>
@@ -432,7 +450,7 @@
       }
     } catch(e) { console.log("Supabase aguardando inicialização"); }
 
-    let dadosUltimoCadastro = null;
+    let dadosTemporarios = null;
 
     function openAuthModal(tab = 'login') {
       document.getElementById('authModal').classList.remove('hidden');
@@ -442,24 +460,23 @@
     function closeAuthModal() {
       document.getElementById('authModal').classList.add('hidden');
       document.getElementById('authAlert').classList.add('hidden');
-      document.getElementById('validationChannelSection').classList.add('hidden');
+      document.getElementById('formValidacaoCompleta').classList.add('hidden');
       document.getElementById('formRegister').classList.remove('hidden');
     }
 
     function switchAuthTab(tab) {
       const loginForm = document.getElementById('formLogin');
       const regForm = document.getElementById('formRegister');
+      const valForm = document.getElementById('formValidacaoCompleta');
       const tabLoginBtn = document.getElementById('tabLoginBtn');
       const tabRegBtn = document.getElementById('tabRegisterBtn');
       const modalTitle = document.getElementById('modalTitle');
       const modalSubtitle = document.getElementById('modalSubtitle');
-      const googleBtnText = document.getElementById('googleBtnText');
       const googleSection = document.getElementById('googleAuthSection');
       const authAlert = document.getElementById('authAlert');
-      const validationSection = document.getElementById('validationChannelSection');
 
       authAlert.classList.add('hidden');
-      validationSection.classList.add('hidden');
+      valForm.classList.add('hidden');
 
       if (tab === 'login') {
         loginForm.classList.remove('hidden');
@@ -470,7 +487,6 @@
         tabRegBtn.className = "py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white";
         modalTitle.innerText = "Acessar o SmartComanda";
         modalSubtitle.innerText = "Entre com as credenciais do seu estabelecimento";
-        googleBtnText.innerText = "Entrar com o Google";
       } else {
         loginForm.classList.add('hidden');
         regForm.classList.remove('hidden');
@@ -480,7 +496,6 @@
         tabLoginBtn.className = "py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white";
         modalTitle.innerText = "Cadastrar Estabelecimento";
         modalSubtitle.innerText = "Crie sua conta para começar a gerenciar seu salão";
-        googleBtnText.innerText = "Cadastrar com o Google";
       }
     }
 
@@ -498,34 +513,26 @@
       }
     }
 
+    // Ao logar com Google, vai direto para a tela de preenchimento/validação preenchida
     async function handleGoogleLogin() {
       showAlert("Conectando com o Google...", "info");
       
       if (supabaseClient) {
-        // Autenticação real com o Google via Supabase OAuth
         const { error } = await supabaseClient.auth.signInWithOAuth({
           provider: 'google',
           options: { redirectTo: window.location.origin }
         });
         if (error) showAlert("Erro ao conectar com Google: " + error.message, "error");
       } else {
-        // Simulação integrada para testes caso as chaves não estejam preenchidas
         setTimeout(() => {
-          dadosUltimoCadastro = {
-            nome_estabelecimento: "Estabelecimento Google",
-            cpf_cnpj: "000.000.000-00",
-            telefone: "31999999999",
-            segmento: "Restaurante",
-            email_admin: "cliente@exemplo.com"
-          };
-          
-          document.getElementById('formRegister').classList.add('hidden');
-          document.getElementById('googleAuthSection').classList.add('hidden');
-          document.getElementById('authTabsContainer').classList.add('hidden');
-          document.getElementById('modalTitle').innerText = "Validação de Cadastro";
-          document.getElementById('modalSubtitle').innerText = "Conexão com Google realizada com sucesso";
-          document.getElementById('validationChannelSection').classList.remove('hidden');
-          showAlert("", "hidden");
+          // Preenche com dados simulados do Google
+          document.getElementById('valCompany').value = "Meu Restaurante Google";
+          document.getElementById('valCpfCnpj').value = "00.000.000/0001-00";
+          document.getElementById('valPhone').value = "(31) 99999-9999";
+          document.getElementById('valSegment').value = "Restaurante";
+          document.getElementById('valEmail').value = "admin@google.com";
+
+          prepararTelaValidacao();
         }, 1000);
       }
     }
@@ -552,35 +559,60 @@
       }
     }
 
-    async function handleRegister(e) {
+    // Avança do cadastro inicial para a tela de validação/preenchimento completo
+    function avancarParaValidacao(e) {
       e.preventDefault();
-      
+
       let segment = document.getElementById('regType').value;
       if (segment === 'Outros') {
         segment = document.getElementById('regTypeOther').value;
       }
 
-      dadosUltimoCadastro = {
-        nome_estabelecimento: document.getElementById('regCompany').value,
-        cpf_cnpj: document.getElementById('regCpfCnpj').value,
-        telefone: document.getElementById('regPhone').value,
-        segmento: segment || 'Restaurante',
-        email_admin: document.getElementById('regEmail').value,
-        cep: document.getElementById('regCep').value,
-        cidade: document.getElementById('regCidade').value,
-        logradouro: document.getElementById('regLogradouro').value,
-        num_casa: document.getElementById('regNumCasa').value,
-        complemeto: document.getElementById('regComplemento').value,
-        bairro: document.getElementById('regBairro').value,
+      // Copia os dados digitados para a tela de validação
+      document.getElementById('valCompany').value = document.getElementById('regCompany').value;
+      document.getElementById('valCpfCnpj').value = document.getElementById('regCpfCnpj').value;
+      document.getElementById('valPhone').value = document.getElementById('regPhone').value;
+      document.getElementById('valSegment').value = segment || 'Restaurante';
+      document.getElementById('valEmail').value = document.getElementById('regEmail').value;
+
+      prepararTelaValidacao();
+    }
+
+    function prepararTelaValidacao() {
+      document.getElementById('formRegister').classList.add('hidden');
+      document.getElementById('googleAuthSection').classList.add('hidden');
+      document.getElementById('authTabsContainer').classList.add('hidden');
+      document.getElementById('modalTitle').innerText = "Validação e Endereço";
+      document.getElementById('modalSubtitle').innerText = "Complete os dados complementares do estabelecimento";
+      document.getElementById('formValidacaoCompleta').classList.remove('hidden');
+      showAlert("", "hidden");
+    }
+
+    // Salva definitivamente todos os campos na tabela 'clientes_estabelecimentos' do Supabase
+    async function salvarCadastroFinal(e) {
+      e.preventDefault();
+
+      const dadosFinais = {
+        nome_estabelecimento: document.getElementById('valCompany').value,
+        cpf_cnpj: document.getElementById('valCpfCnpj').value,
+        telefone: document.getElementById('valPhone').value,
+        segmento: document.getElementById('valSegment').value,
+        email_admin: document.getElementById('valEmail').value,
+        cep: document.getElementById('valCep').value,
+        cidade: document.getElementById('valCidade').value,
+        logradouro: document.getElementById('valLogradouro').value,
+        num_casa: document.getElementById('valNumCasa').value,
+        complemeto: document.getElementById('valComplemento').value,
+        bairro: document.getElementById('valBairro').value,
         criado_em: new Date().toISOString()
       };
 
-      showAlert("Salvando dados na tabela do Supabase...", "info");
+      showAlert("Salvando cadastro completo no Supabase...", "info");
 
       if (supabaseClient) {
         const { error } = await supabaseClient
           .from('clientes_estabelecimentos')
-          .insert([dadosUltimoCadastro]);
+          .insert([dadosFinais]);
 
         if (error) {
           showAlert("Erro ao salvar no banco: " + error.message, "error");
@@ -588,43 +620,10 @@
         }
       }
 
+      showAlert("✅ Cadastro validado e salvo com sucesso!", "success");
       setTimeout(() => {
-        document.getElementById('formRegister').classList.add('hidden');
-        document.getElementById('googleAuthSection').classList.add('hidden');
-        document.getElementById('authTabsContainer').classList.add('hidden');
-        document.getElementById('modalTitle').innerText = "Validação do Cadastro";
-        document.getElementById('modalSubtitle').innerText = "Selecione onde deseja enviar o link de validação";
-        document.getElementById('validationChannelSection').classList.remove('hidden');
-        showAlert("", "hidden");
-      }, 800);
-    }
-
-    // Funcionalidade real implementada para disparo por E-mail e WhatsApp
-    function sendValidationLink(canal) {
-      if (!dadosUltimoCadastro) return;
-
-      const linkValidacao = "https://smartcomanda.econotechbi.com.br/validar?token=smart_" + Math.random().toString(36).substring(2, 9);
-      const empresa = dadosUltimoCadastro.nome_estabelecimento;
-      const telefoneDestino = (dadosUltimoCadastro.telefone || "").replace(/\D/g, ''); // Remove caracteres não numéricos
-      const emailDestino = dadosUltimoCadastro.email_admin;
-
-      if (canal === 'email') {
-        // Disparo padrão via cliente de E-mail do usuário (mailto)
-        const assunto = encodeURIComponent("Validação e Confirmação de Cadastro - SmartComanda");
-        const corpo = encodeURIComponent(`Olá, ${empresa}!\n\nSeu cadastro no SmartComanda foi realizado com sucesso.\nPor favor, acesse o link abaixo para preenchimento e validação final dos seus dados:\n\n${linkValidacao}\n\nAtenciosamente,\nEquipe EconoTechBI`);
-        
-        window.location.href = `mailto:${emailDestino}?subject=${assunto}&body=${corpo}`;
         closeAuthModal();
-
-      } else if (canal === 'whatsapp') {
-        // Disparo padrão via API oficial do WhatsApp com mensagem formatada
-        const mensagem = encodeURIComponent(`Olá, *${empresa}*! 🚀\n\nSeu cadastro no *SmartComanda* foi recebido com sucesso.\nPor favor, clique no link abaixo para preencher e validar as informações do seu estabelecimento:\n\n${linkValidacao}\n\nQualquer dúvida, estamos à disposição!\n_Equipe EconoTechBI_`);
-        
-        const urlWhatsapp = `https://api.whatsapp.com/send?phone=${telefoneDestino}&text=${mensagem}`;
-        
-        window.open(urlWhatsapp, '_blank');
-        closeAuthModal();
-      }
+      }, 2000);
     }
 
     function showAlert(msg, type) {
