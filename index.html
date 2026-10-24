@@ -120,8 +120,8 @@
       </div>
 
       <div id="authTabsContainer" class="grid grid-cols-2 bg-slate-950 p-1 rounded-xl mb-6 border border-slate-800">
-        <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="py-2 text-xs font-bold rounded-lg transition-all text-white bg-slate-800 shadow">Entrar</button>
-        <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">Cadastrar Novo</button>
+        <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="py-2 text-xs font-bold rounded-lg text-white bg-slate-800 shadow">Entrar</button>
+        <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white">Cadastrar Novo</button>
       </div>
 
       <div id="googleAuthSection" class="mb-5">
@@ -256,9 +256,9 @@
 
   <!-- ================= SCRIPTS JS ================= -->
   <script>
-    // ⚠️ ATENÇÃO: Substitua pelas suas credenciais reais do painel do Supabase (Project Settings > API)
+    // Suas credenciais do Supabase
     const SUPABASE_URL = "https://ubtgyzcdvumfxgujpshz.supabase.co"; 
-    const SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_PUBLIC";
+    const SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_PUBLIC"; // Substitua pela sua chave anon public correta do Supabase
     
     let supabaseClient = null;
     try {
@@ -327,24 +327,17 @@
       }
     }
 
-    async function handleGoogleLogin() {
-      showAlert("Conectando com o Google...", "info");
-      if (supabaseClient) {
-        const { error } = await supabaseClient.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: window.location.origin }
-        });
-        if (error) showAlert("Erro ao conectar com Google: " + error.message, "error");
-      } else {
-        setTimeout(() => {
-          document.getElementById('valCompany').value = "Estabelecimento Google";
-          document.getElementById('valCpfCnpj').value = "00.000.000/0001-00";
-          document.getElementById('valPhone').value = "(31) 99999-9999";
-          document.getElementById('valSegment').value = "Restaurante";
-          document.getElementById('valEmail').value = "admin@google.com";
-          prepararTelaValidacao();
-        }, 1000);
-      }
+    // Tratamento seguro para simulação do login Google sem precisar de credenciais Cloud por enquanto
+    function handleGoogleLogin() {
+      showAlert("Iniciando acesso rápido com Google...", "info");
+      setTimeout(() => {
+        document.getElementById('valCompany').value = "Estabelecimento via Google";
+        document.getElementById('valCpfCnpj').value = "00.000.000/0001-00";
+        document.getElementById('valPhone').value = "(31) 99999-9999";
+        document.getElementById('valSegment').value = "Restaurante";
+        document.getElementById('valEmail').value = "usuario_google@gmail.com";
+        prepararTelaValidacao();
+      }, 800);
     }
 
     async function handleLogin(e) {
@@ -392,7 +385,7 @@
       showAlert("", "hidden");
     }
 
-    // Função revisada de salvamento com log detalhado no console (F12)
+    // Função de salvamento definitiva no Supabase
     async function salvarCadastroFinal(e) {
       e.preventDefault();
 
@@ -415,7 +408,7 @@
       console.log("Tentando inserir dados:", dadosParaSalvar);
 
       if (!supabaseClient) {
-        showAlert("Erro: Cliente Supabase não inicializado. Verifique a URL e a Chave.", "error");
+        showAlert("Erro: Cliente Supabase não inicializado. Verifique a chave Anon Key.", "error");
         return;
       }
 
