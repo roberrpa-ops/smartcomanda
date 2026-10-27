@@ -124,12 +124,6 @@
         <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white">Cadastrar Novo</button>
       </div>
 
-      <div id="googleAuthSection" class="mb-5">
-        <button type="button" onclick="handleGoogleLogin()" class="w-full bg-slate-950 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold py-2.5 px-4 rounded-xl text-sm flex items-center justify-center gap-3">
-          <i class="fa-brands fa-google text-brand-400"></i> Entrar com o Google
-        </button>
-      </div>
-
       <!-- FORMULÁRIO DE LOGIN -->
       <form id="formLogin" onsubmit="handleLogin(event)" class="space-y-4">
         <div>
@@ -258,7 +252,7 @@
   <script>
     // Suas credenciais do Supabase
     const SUPABASE_URL = "https://ubtgyzcdvumfxgujpshz.supabase.co"; 
-    const SUPABASE_ANON_KEY = "sb_publishable_eH09_dM0w0DreGw8JOx7mg_P1w3rZGC"; // Substitua pela sua chave anon public correta do Supabase
+    const SUPABASE_ANON_KEY = "sb_publishable_eH09_dM0w0DreGw8JOx7mg_P1w3rZGC"; 
     
     let supabaseClient = null;
     try {
@@ -287,7 +281,6 @@
       const tabRegBtn = document.getElementById('tabRegisterBtn');
       const modalTitle = document.getElementById('modalTitle');
       const modalSubtitle = document.getElementById('modalSubtitle');
-      const googleSection = document.getElementById('googleAuthSection');
       const authAlert = document.getElementById('authAlert');
 
       authAlert.classList.add('hidden');
@@ -296,7 +289,6 @@
       if (tab === 'login') {
         loginForm.classList.remove('hidden');
         regForm.classList.add('hidden');
-        googleSection.classList.remove('hidden');
         document.getElementById('authTabsContainer').classList.remove('hidden');
         tabLoginBtn.className = "py-2 text-xs font-bold rounded-lg text-white bg-slate-800 shadow";
         tabRegBtn.className = "py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
@@ -305,7 +297,6 @@
       } else {
         loginForm.classList.add('hidden');
         regForm.classList.remove('hidden');
-        googleSection.classList.remove('hidden');
         document.getElementById('authTabsContainer').classList.remove('hidden');
         tabRegBtn.className = "py-2 text-xs font-bold rounded-lg text-white bg-slate-800 shadow";
         tabLoginBtn.className = "py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
@@ -325,19 +316,6 @@
         otherInput.required = false;
         otherInput.value = '';
       }
-    }
-
-    // Tratamento seguro para simulação do login Google sem precisar de credenciais Cloud por enquanto
-    function handleGoogleLogin() {
-      showAlert("Iniciando acesso rápido com Google...", "info");
-      setTimeout(() => {
-        document.getElementById('valCompany').value = "Estabelecimento via Google";
-        document.getElementById('valCpfCnpj').value = "00.000.000/0001-00";
-        document.getElementById('valPhone').value = "(31) 99999-9999";
-        document.getElementById('valSegment').value = "Restaurante";
-        document.getElementById('valEmail').value = "usuario_google@gmail.com";
-        prepararTelaValidacao();
-      }, 800);
     }
 
     async function handleLogin(e) {
@@ -377,7 +355,6 @@
 
     function prepararTelaValidacao() {
       document.getElementById('formRegister').classList.add('hidden');
-      document.getElementById('googleAuthSection').classList.add('hidden');
       document.getElementById('authTabsContainer').classList.add('hidden');
       document.getElementById('modalTitle').innerText = "Validação e Endereço";
       document.getElementById('modalSubtitle').innerText = "Complete o endereço do estabelecimento";
