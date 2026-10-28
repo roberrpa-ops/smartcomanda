@@ -23,24 +23,30 @@
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
       <h2 class="text-xl font-bold text-white mb-4">Adicionar Novo Item ao Cardápio</h2>
       
-      <form id="formProduto" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="sm:col-span-3">
+      <form id="formProduto" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="sm:col-span-2">
           <label class="block text-xs font-semibold text-slate-300 mb-1">Nome do Produto / Prato *</label>
-          <input type="text" id="nomeProduto" required placeholder="Ex: Hambúrguer Artesanal" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+          <input type="text" id="nomeProduto" placeholder="Ex: Hambúrguer Artesanal" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Preço de Venda (R$) *</label>
-          <input type="number" id="precoVenda" step="0.01" required placeholder="Ex: 35.00" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+          <input type="number" id="precoVenda" step="0.01" placeholder="Ex: 35.00" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Custo do Insumo (R$) *</label>
-          <input type="number" id="custoInsumo" step="0.01" required placeholder="Ex: 12.50" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+          <input type="number" id="custoInsumo" step="0.01" placeholder="Ex: 12.50" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
         </div>
 
-        <div class="flex items-end">
-          <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-2 px-4 rounded-lg transition duration-200 text-sm">
+        <!-- Campo Descrição -->
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Descrição do Lanche, Prato ou Bebida *</label>
+          <textarea id="descricaoProduto" rows="2" placeholder="Ex: Pão brioche, blend 180g de carne, queijo cheddar derretido e maionese artesanal da casa." class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-cyan-500"></textarea>
+        </div>
+
+        <div class="sm:col-span-2 pt-2">
+          <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-2.5 px-4 rounded-lg transition duration-200 text-sm">
             + Cadastrar Produto
           </button>
         </div>
@@ -59,7 +65,7 @@
         <table class="w-full text-left text-sm text-slate-300">
           <thead class="bg-slate-800 text-slate-400 uppercase text-xs">
             <tr>
-              <th class="py-3 px-4">Item</th>
+              <th class="py-3 px-4">Item & Descrição</th>
               <th class="py-3 px-4">Preço Venda</th>
               <th class="py-3 px-4">Custo Insumo</th>
               <th class="py-3 px-4">Margem de Lucro</th>
@@ -78,20 +84,18 @@
 
   <!-- Script de Integração com o Supabase -->
   <script>
-    // Configurações do Supabase
-    // Substitua os valores abaixo pelos seus dados do painel do Supabase (Project Settings > API)
     const SUPABASE_URL = "https://ubtgyzcdvumfxgujpshz.supabase.co"; 
     const SUPABASE_ANON_KEY = "sb_publishable_eH09_dM0w0DreGw8JOx7mg_P1w3rZGC";
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Função para carregar e exibir produtos salvos no Supabase
+    // Função para carregar e exibir produtos salvos na tabela cardapio
     async function carregarProdutos() {
       const tabela = document.getElementById('tabelaProdutos');
       tabela.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-500">Buscando do banco...</td></tr>`;
 
       const { data, error } = await supabaseClient
-        .from('produtos')
+        .from('cardapio')
         .select('*');
 
       if (error) {
@@ -106,17 +110,22 @@
 
       tabela.innerHTML = data.map(p => {
         const preco = parseFloat(p.preco_venda || 0);
-        const custo = parseFloat(p.custo_insumo || 0);
+        const custo = parseFloat(p.custo || 0);
         const lucro = preco - custo;
         const margem = preco > 0 ? ((lucro / preco) * 100).toFixed(1) : 0;
+        const nomeItem = p.nome || 'Produto sem nome';
+        const descricaoText = p.descricao || 'Sem descrição informada.';
 
         return `
           <tr class="hover:bg-slate-800/50">
-            <td class="py-3 px-4 font-semibold text-white">${p.nome}</td>
-            <td class="py-3 px-4 text-emerald-400">R$ ${preco.toFixed(2)}</td>
-            <td class="py-3 px-4 text-rose-400">R$ ${custo.toFixed(2)}</td>
             <td class="py-3 px-4">
-              <span class="inline-block bg-cyan-950 text-cyan-400 text-xs px-2.5 py-1 rounded border border-cyan-800">
+              <div class="font-semibold text-white">${nomeItem}</div>
+              <div class="text-xs text-slate-400 truncate max-w-xs mt-0.5">${descricaoText}</div>
+            </td>
+            <td class="py-3 px-4 text-emerald-400 font-medium">R$ ${preco.toFixed(2)}</td>
+            <td class="py-3 px-4 text-rose-400 font-medium">R$ ${custo.toFixed(2)}</td>
+            <td class="py-3 px-4">
+              <span class="inline-block bg-cyan-950 text-cyan-400 text-xs px-2.5 py-1 rounded border border-cyan-800 font-medium">
                 R$ ${lucro.toFixed(2)} (${margem}%)
               </span>
             </td>
@@ -125,29 +134,42 @@
       }).join('');
     }
 
-    // Função para inserir produto no Supabase
+    // Função de envio com validação dos 4 campos e salvamento na tabela cardapio
     document.getElementById('formProduto').addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const nome = document.getElementById('nomeProduto').value;
-      const preco_venda = parseFloat(document.getElementById('precoVenda').value);
-      const custo_insumo = parseFloat(document.getElementById('custoInsumo').value);
+      const nome = document.getElementById('nomeProduto').value.trim();
+      const precoVendaStr = document.getElementById('precoVenda').value.trim();
+      const custoInsumoStr = document.getElementById('custoInsumo').value.trim();
+      const descricao = document.getElementById('descricaoProduto').value.trim();
       const msgStatus = document.getElementById('mensagemStatus');
 
+      // Validação de campos vazios
+      if (!nome || !precoVendaStr || !custoInsumoStr || !descricao) {
+        msgStatus.className = "mt-3 text-sm text-red-400 font-semibold";
+        msgStatus.textContent = "⚠️ Erro: Existe campo vazio! Por favor, preencha todos os 4 campos antes de cadastrar.";
+        msgStatus.classList.remove('hidden');
+        return;
+      }
+
+      const preco_venda = parseFloat(precoVendaStr);
+      const custo = parseFloat(custoInsumoStr);
+
       msgStatus.className = "mt-3 text-sm text-cyan-400";
-      msgStatus.textContent = "Salvando produto no Supabase...";
+      msgStatus.textContent = "Salvando produto na tabela cardapio...";
       msgStatus.classList.remove('hidden');
 
+      // Inserção na tabela cardapio do Supabase
       const { data, error } = await supabaseClient
-        .from('produtos')
-        .insert([{ nome, preco_venda, custo_insumo }]);
+        .from('cardapio')
+        .insert([{ nome, preco_venda, custo, descricao }]);
 
       if (error) {
         msgStatus.className = "mt-3 text-sm text-red-400";
         msgStatus.textContent = "Erro ao cadastrar: " + error.message;
       } else {
         msgStatus.className = "mt-3 text-sm text-emerald-400";
-        msgStatus.textContent = "Produto cadastrado com sucesso!";
+        msgStatus.textContent = "✅ Produto cadastrado com sucesso na tabela cardapio!";
         document.getElementById('formProduto').reset();
         carregarProdutos();
       }
