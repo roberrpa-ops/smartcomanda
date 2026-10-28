@@ -249,46 +249,6 @@
                 </div>
             </section>
 
-            <!-- ================= TAB 2: GESTÃO DO CARDÁPIO ================= -->
-            <section id="tab-content-menu" class="hidden space-y-4">
-                
-                <!-- Barra de Ferramentas (Busca & Filtros) -->
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/80">
-                    <div class="relative w-full sm:w-72">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                        <input type="text" id="menuSearchInput" oninput="renderMenuTable()" placeholder="Buscar prato ou bebida..." class="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-400 text-xs rounded-xl pl-8 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500">
-                    </div>
-
-                    <div class="flex items-center space-x-2 w-full sm:w-auto overflow-x-auto no-scrollbar">
-                        <button onclick="filterMenuCategory('todos')" class="menu-cat-btn active bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap">Todos</button>
-                        <button onclick="filterMenuCategory('principais')" class="menu-cat-btn bg-slate-900 border border-slate-700 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap hover:border-amber-500">Principais</button>
-                        <button onclick="filterMenuCategory('entradas')" class="menu-cat-btn bg-slate-900 border border-slate-700 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap hover:border-amber-500">Entradas</button>
-                        <button onclick="filterMenuCategory('bebidas')" class="menu-cat-btn bg-slate-900 border border-slate-700 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap hover:border-amber-500">Bebidas</button>
-                        <button onclick="filterMenuCategory('sobremesas')" class="menu-cat-btn bg-slate-900 border border-slate-700 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap hover:border-amber-500">Sobremesas</button>
-                    </div>
-                </div>
-
-                <!-- Tabela de Produtos -->
-                <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl overflow-hidden shadow-xl">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs text-slate-300">
-                            <thead class="bg-slate-950 uppercase text-[10px] text-slate-400 border-b border-slate-700 font-semibold tracking-wider">
-                                <tr>
-                                    <th class="p-4">Item / Imagem</th>
-                                    <th class="p-4">Categoria</th>
-                                    <th class="p-4">Preço (R$)</th>
-                                    <th class="p-4">Status / Estoque</th>
-                                    <th class="p-4 text-right">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-700/60" id="menuTableBody">
-                                <!-- Renderizado via JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
             <!-- ================= TAB 3: MESAS & COMANDAS ================= -->
             <section id="tab-content-tables" class="hidden space-y-6">
                 <!-- Visão do Salão (Grid de Mesas) -->
@@ -428,50 +388,6 @@
         </div>
     </main>
 
-    <!-- MODAL: NOVO / EDITAR PRODUTO -->
-    <div id="productModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center hidden p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-5 shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="font-bold text-white text-sm" id="productModalTitle">Cadastrar Novo Item</h3>
-                <button onclick="closeProductModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <form id="productForm" onsubmit="saveProduct(event)" class="space-y-3">
-                <input type="hidden" id="prodId">
-                <div>
-                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nome do Item</label>
-                    <input type="text" id="prodName" required placeholder="Ex: Filé Mignon ao Molho Madeira" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Categoria</label>
-                        <select id="prodCategory" required class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                            <option value="principais">Prato Principal</option>
-                            <option value="entradas">Entrada / Aperitivo</option>
-                            <option value="bebidas">Bebida</option>
-                            <option value="sobremesas">Sobremesa</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Preço (R$)</label>
-                        <input type="number" step="0.01" id="prodPrice" required placeholder="00.00" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Descrição do Prato/Bebida</label>
-                    <textarea id="prodDesc" rows="2" placeholder="Ingredientes principais, peso, observações..." class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
-                </div>
-
-                <div class="flex space-x-2 pt-2 border-t border-slate-800">
-                    <button type="button" onclick="closeProductModal()" class="flex-1 bg-slate-800 text-slate-300 font-semibold py-2.5 rounded-xl text-xs hover:bg-slate-700 transition">Cancelar</button>
-                    <button type="submit" class="flex-1 bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs hover:bg-amber-400 transition">Salvar Item</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- MODAL: ADICIONAR CLIENTE À FILA DE ESPERA -->
     <div id="waitlistModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center hidden p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
@@ -541,11 +457,9 @@
 
     <!-- JAVASCRIPT LOCAL COM DADOS DINÂMICOS -->
     <script>
-        // DATA STATE
-        let currentMenuCategory = 'todos';
         let selectedMesaId = 1;
 
-        // CARDÁPIO LOCAL
+        // CARDÁPIO LOCAL (Referência de produtos para as comandas)
         let menuItems = [
             { id: 1, name: "Combo Burger Craft + Fritas", category: "principais", price: 38.90, desc: "Hambúrguer artesanal 180g com batatas rústicas", active: true },
             { id: 2, name: "Batata Rústica com Gouda & Bacon", category: "entradas", price: 28.00, desc: "Porção de 400g com queijo derretido e bacon", active: true },
@@ -589,7 +503,6 @@
             const now = new Date();
             document.getElementById('currentDate').innerText = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
 
-            renderMenuTable();
             renderTablesGrid();
             renderSelectedMesaDetail();
             renderKDS();
@@ -597,12 +510,17 @@
             renderDashWaitlistSummary();
         });
 
-        // TROCA DE ABAS
+        // TROCA DE ABAS E REDIRECIONAMENTO DO CARDÁPIO
         function switchTab(tabId) {
-            const tabs = ['dashboard', 'menu', 'tables', 'kds', 'waitlist'];
+            // Se o usuário clicar em Gestão do Cardápio, redireciona para a página cad_cardapio.html
+            if (tabId === 'menu') {
+                window.location.href = 'cad_cardapio.html';
+                return;
+            }
+
+            const tabs = ['dashboard', 'tables', 'kds', 'waitlist'];
             const titles = {
                 dashboard: "Visão Geral & KPIs",
-                menu: "Gestão do Cardápio",
                 tables: "Gestão de Mesas & Comandas",
                 kds: "KDS & Monitor da Cozinha",
                 waitlist: "Fila de Espera da Recepção"
@@ -615,140 +533,12 @@
                     content.classList.remove('hidden');
                     btn.className = "nav-btn active w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 transition";
                 } else {
-                    content.classList.add('hidden');
+                    if (content) content.classList.add('hidden');
                     btn.className = "nav-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800/60 hover:text-white transition";
                 }
             });
 
             document.getElementById('pageTitle').innerText = titles[tabId];
-        }
-
-        // ================= GESTÃO DO CARDÁPIO =================
-        function filterMenuCategory(cat) {
-            currentMenuCategory = cat;
-            document.querySelectorAll('.menu-cat-btn').forEach(btn => {
-                btn.className = "menu-cat-btn bg-slate-900 border border-slate-700 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap hover:border-amber-500";
-            });
-            event.currentTarget.className = "menu-cat-btn active bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap";
-            renderMenuTable();
-        }
-
-        function renderMenuTable() {
-            const tbody = document.getElementById('menuTableBody');
-            const search = document.getElementById('menuSearchInput').value.toLowerCase();
-            tbody.innerHTML = '';
-
-            const filtered = menuItems.filter(item => {
-                const matchCat = currentMenuCategory === 'todos' || item.category === currentMenuCategory;
-                const matchSearch = item.name.toLowerCase().includes(search) || item.desc.toLowerCase().includes(search);
-                return matchCat && matchSearch;
-            });
-
-            filtered.forEach(item => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-800/50 transition">
-                        <td class="p-4">
-                            <div class="font-bold text-white text-xs">${item.name}</div>
-                            <div class="text-[10px] text-slate-400 truncate max-w-xs">${item.desc}</div>
-                        </td>
-                        <td class="p-4">
-                            <span class="bg-slate-900 border border-slate-700 text-slate-300 text-[10px] font-semibold px-2 py-0.5 rounded-md uppercase">
-                                ${item.category}
-                            </span>
-                        </td>
-                        <td class="p-4 font-bold text-amber-400">R$ ${item.price.toFixed(2).replace('.', ',')}</td>
-                        <td class="p-4">
-                            <button onclick="toggleProductStatus(${item.id})" class="flex items-center space-x-1.5 focus:outline-none">
-                                <span class="w-2.5 h-2.5 rounded-full ${item.active ? 'bg-emerald-400' : 'bg-rose-500'}"></span>
-                                <span class="text-[11px] font-semibold ${item.active ? 'text-emerald-400' : 'text-rose-400'}">
-                                    ${item.active ? 'Disponível' : 'Esgotado'}
-                                </span>
-                            </button>
-                        </td>
-                        <td class="p-4 text-right space-x-1">
-                            <button onclick="editProduct(${item.id})" class="p-1.5 rounded-lg bg-slate-900 text-slate-300 hover:text-amber-400 hover:bg-slate-800 transition">
-                                <i class="fa-solid fa-pen text-xs"></i>
-                            </button>
-                            <button onclick="deleteProduct(${item.id})" class="p-1.5 rounded-lg bg-slate-900 text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition">
-                                <i class="fa-solid fa-trash text-xs"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function toggleProductStatus(id) {
-            const prod = menuItems.find(p => p.id === id);
-            if (prod) {
-                prod.active = !prod.active;
-                renderMenuTable();
-                showToast(`Status de "${prod.name}" alterado para ${prod.active ? 'Disponível' : 'Esgotado'}`);
-            }
-        }
-
-        function openNewProductModal() {
-            document.getElementById('productForm').reset();
-            document.getElementById('prodId').value = '';
-            document.getElementById('productModalTitle').innerText = 'Cadastrar Novo Item';
-            document.getElementById('productModal').classList.remove('hidden');
-        }
-
-        function editProduct(id) {
-            const prod = menuItems.find(p => p.id === id);
-            if (prod) {
-                document.getElementById('prodId').value = prod.id;
-                document.getElementById('prodName').value = prod.name;
-                document.getElementById('prodCategory').value = prod.category;
-                document.getElementById('prodPrice').value = prod.price;
-                document.getElementById('prodDesc').value = prod.desc;
-                
-                document.getElementById('productModalTitle').innerText = 'Editar Item do Cardápio';
-                document.getElementById('productModal').classList.remove('hidden');
-            }
-        }
-
-        function closeProductModal() {
-            document.getElementById('productModal').classList.add('hidden');
-        }
-
-        function saveProduct(e) {
-            e.preventDefault();
-            const id = document.getElementById('prodId').value;
-            const name = document.getElementById('prodName').value;
-            const category = document.getElementById('prodCategory').value;
-            const price = parseFloat(document.getElementById('prodPrice').value);
-            const desc = document.getElementById('prodDesc').value;
-
-            if (id) {
-                const prod = menuItems.find(p => p.id == id);
-                if (prod) {
-                    prod.name = name;
-                    prod.category = category;
-                    prod.price = price;
-                    prod.desc = desc;
-                    showToast('Item atualizado com sucesso!');
-                }
-            } else {
-                menuItems.push({
-                    id: Date.now(),
-                    name,
-                    category,
-                    price,
-                    desc,
-                    active: true
-                });
-                showToast('Novo item cadastrado no cardápio!');
-            }
-
-            closeProductModal();
-            renderMenuTable();
-        }
-
-        function deleteProduct(id) {
-            menuItems = menuItems.filter(p => p.id !== id);
-            renderMenuTable();
-            showToast('Item removido do cardápio', 'fa-trash');
         }
 
         // ================= GESTÃO DE MESAS & COMANDAS =================
