@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-slate-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartComanda Admin - Gestão & Operação</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fffbea',
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            dark: '#0f172a',
+                            slate: '#1e293b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="h-full font-sans text-slate-100 bg-slate-900 antialiased flex flex-col md:flex-row overflow-hidden">
+
+    <!-- SIDEBAR DE NAVEGAÇÃO -->
+    <aside class="w-full md:w-64 bg-slate-950 border-r border-slate-800 flex-shrink-0 flex flex-col justify-between z-20">
+        <div>
+            <!-- Header Marca -->
+            <div class="p-5 flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-400 flex items-center justify-center text-slate-950 font-extrabold shadow-lg">
+                        <i class="fa-solid fa-utensils text-base"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-black text-base leading-none text-white tracking-wide">SmartComanda</h1>
+                        <span class="text-[10px] text-amber-400 font-semibold tracking-wider uppercase">Painel Gestor</span>
+                    </div>
+                </div>
+                <span class="md:hidden bg-amber-500/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-500/20">v2.4</span>
+            </div>
+
+            <!-- Links de Navegação -->
+            <nav class="p-3 space-y-1">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn active w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 transition">
+                    <i class="fa-solid fa-chart-pie w-4 text-center"></i>
+                    <span>Visão Geral & KPIs</span>
+                </button>
+                <button onclick="switchTab('menu')" id="nav-menu" class="nav-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800/60 hover:text-white transition">
+                    <i class="fa-solid fa-book-open w-4 text-center"></i>
+                    <span>Gestão do Cardápio</span>
+                </button>
+                <button onclick="switchTab('tables')" id="nav-tables" class="nav-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800/60 hover:text-white transition">
+                    <i class="fa-solid fa-chair w-4 text-center"></i>
+                    <span>Mesas & Comandas</span>
+                    <span class="ml-auto bg-amber-500 text-slate-950 font-bold text-[10px] px-1.5 py-0.2 rounded-full" id="activeTablesBadge">5</span>
+                </button>
+                <button onclick="switchTab('kds')" id="nav-kds" class="nav-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800/60 hover:text-white transition">
+                    <i class="fa-solid fa-kitchen-set w-4 text-center"></i>
+                    <span>Cozinha & Pedidos</span>
+                    <span class="ml-auto bg-rose-500 text-white font-bold text-[10px] px-1.5 py-0.2 rounded-full" id="pendingOrdersBadge">3</span>
+                </button>
+                <button onclick="switchTab('waitlist')" id="nav-waitlist" class="nav-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800/60 hover:text-white transition">
+                    <i class="fa-solid fa-users-line w-4 text-center"></i>
+                    <span>Fila de Espera</span>
+                    <span class="ml-auto bg-slate-700 text-slate-300 font-bold text-[10px] px-1.5 py-0.2 rounded-full" id="waitlistCountBadge">4</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Perfil do Gestor -->
+        <div class="p-3 border-t border-slate-800 bg-slate-950/80">
+            <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center text-xs">
+                        GS
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-200">Gerente Geral</p>
+                        <p class="text-[10px] text-emerald-400 flex items-center space-x-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+                            <span>Sessão Ativa</span>
+                        </p>
+                    </div>
+                </div>
+                <button onclick="showToast('Sessão mantida com sucesso.', 'fa-shield')" class="text-slate-500 hover:text-slate-300 p-1">
+                    <i class="fa-solid fa-power-off text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL (ÁREA DE TRABALHO) -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-slate-900">
+        
+        <!-- Topbar Secundária -->
+        <header class="h-14 border-b border-slate-800 bg-slate-950/50 backdrop-blur-md px-6 flex items-center justify-between flex-shrink-0">
+            <div class="flex items-center space-x-3">
+                <h2 id="pageTitle" class="text-sm font-extrabold text-white uppercase tracking-wider">Visão Geral & KPIs</h2>
+                <span class="text-slate-600">|</span>
+                <span id="currentDate" class="text-xs text-slate-400 font-medium"></span>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <button onclick="switchTab('waitlist')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-user-plus text-amber-400"></i>
+                    <span>+ Fila de Espera</span>
+                </button>
+                <button onclick="openNewProductModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg shadow-md transition flex items-center space-x-2">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span>Novo Prato/Bebida</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ÁREA SCROLLÁVEL DAS ABAS -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+
+            <!-- ================= TAB 1: DASHBOARD & KPIS ================= -->
+            <section id="tab-content-dashboard" class="space-y-6">
+                <!-- Grid de KPIs -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+                        <div>
+                            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Faturamento Hoje</span>
+                            <p class="text-2xl font-black text-white mt-1" id="kpiFaturamento">R$ 3.842,50</p>
+                            <span class="text-[10px] text-emerald-400 font-bold flex items-center space-x-1 mt-1">
+                                <i class="fa-solid fa-arrow-up text-[9px]"></i>
+                                <span>+18.4% vs ontem</span>
+                            </span>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-sack-dollar"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+                        <div>
+                            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Ocupação do Salão</span>
+                            <p class="text-2xl font-black text-white mt-1" id="kpiOcupacao">5 / 8 Mesas</p>
+                            <span class="text-[10px] text-amber-400 font-bold flex items-center space-x-1 mt-1">
+                                <i class="fa-solid fa-chart-simple text-[9px]"></i>
+                                <span>62.5% de capacidade</span>
+                            </span>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-chair"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+                        <div>
+                            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Pedidos na Cozinha</span>
+                            <p class="text-2xl font-black text-white mt-1" id="kpiPedidosAbertos">3 Em Espera</p>
+                            <span class="text-[10px] text-rose-400 font-bold flex items-center space-x-1 mt-1">
+                                <i class="fa-solid fa-fire text-[9px]"></i>
+                                <span>2 com prioridade</span>
+                            </span>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-fire-burner"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+                        <div>
+                            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Tempo Médio Espera</span>
+                            <p class="text-2xl font-black text-white mt-1">18 min</p>
+                            <span class="text-[10px] text-emerald-400 font-bold flex items-center space-x-1 mt-1">
+                                <i class="fa-solid fa-check text-[9px]"></i>
+                                <span>Dentro da meta (&lt;25m)</span>
+                            </span>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-stopwatch"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumos Rápidos (Mesas Alerta e Fila) -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Chamados Ativos de Clientes -->
+                    <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-4 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+                                <i class="fa-solid fa-bell text-amber-400 animate-bounce"></i>
+                                <span>Chamados Pendentes dos Clientes</span>
+                            </h3>
+                            <span class="text-[10px] bg-amber-500/20 text-amber-400 font-bold px-2 py-0.5 rounded-full">Atendimento Imediato</span>
+                        </div>
+                        <div class="space-y-2" id="alertsList">
+                            <div class="p-3 bg-slate-900 border border-amber-500/30 rounded-xl flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 font-extrabold flex items-center justify-center text-xs">
+                                        M02
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-white">Mesa 02 solicitou: <strong class="text-amber-400">Garçom</strong></p>
+                                        <p class="text-[10px] text-slate-400">Há 3 minutos</p>
+                                    </div>
+                                </div>
+                                <button onclick="resolveAlert(this)" class="text-xs font-semibold text-slate-950 bg-amber-400 hover:bg-amber-300 px-3 py-1 rounded-lg transition">Atender</button>
+                            </div>
+                            <div class="p-3 bg-slate-900 border border-emerald-500/30 rounded-xl flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 font-extrabold flex items-center justify-center text-xs">
+                                        M05
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-white">Mesa 05 solicitou: <strong class="text-emerald-400">Pedir a Conta</strong></p>
+                                        <p class="text-[10px] text-slate-400">Há 1 minuto</p>
+                                    </div>
+                                </div>
+                                <button onclick="resolveAlert(this)" class="text-xs font-semibold text-slate-950 bg-emerald-400 hover:bg-emerald-300 px-3 py-1 rounded-lg transition">Levar Conta</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fila de Espera Resumida -->
+                    <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-4 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+                                <i class="fa-solid fa-users-line text-sky-400"></i>
+                                <span>Próximos da Fila de Espera</span>
+                            </h3>
+                            <button onclick="switchTab('waitlist')" class="text-xs text-amber-400 hover:underline">Ver Todos</button>
+                        </div>
+                        <div class="divide-y divide-slate-700/50 text-xs" id="dashWaitlistSummary">
+                            <!-- Inserido via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= TAB 2: GESTÃO DO CARDÁPIO ================= -->
+            <section id="tab-content-menu" class="hidden space-y-4">
+                
+                <!-- Barra de Ferramentas (Busca & Filtros) -->
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-3 bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/80">
+                    <div class="relative w-full sm:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="menuSearchInput" oninput="renderMenuTable()" placeholder="Buscar prato ou bebida..." class="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-400 text-xs rounded-xl pl-8 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+
+                    <div class="flex items-center space-x-2 w-full sm:w-auto overflow-x-auto no-scrollbar">
+                        <button onclick="filterMenuCategory('todos')" class="menu-cat-btn active bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap">Todos</button>
+                        <button onclick="filterMenuCategory('principais')" class="menu-cat-btn bg-slate-900 border border-slate-700 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap hover:border-amber-500">Principais</button>
+                        <button onclick="filterMenuCategory('entradas')" class="menu-cat-btn bg-slate-900 border border-slate-700 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap hover:border-amber-500">Entradas</button>
+                        <button onclick="filterMenuCategory('bebidas')" class="menu-cat-btn bg-slate-900 border border-slate-700 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap hover:border-amber-500">Bebidas</button>
+                        <button onclick="filterMenuCategory('sobremesas')" class="menu-cat-btn bg-slate-900 border border-slate-700 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap hover:border-amber-500">Sobremesas</button>
+                    </div>
+                </div>
+
+                <!-- Tabela de Produtos -->
+                <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl overflow-hidden shadow-xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-950 uppercase text-[10px] text-slate-400 border-b border-slate-700 font-semibold tracking-wider">
+                                <tr>
+                                    <th class="p-4">Item / Imagem</th>
+                                    <th class="p-4">Categoria</th>
+                                    <th class="p-4">Preço (R$)</th>
+                                    <th class="p-4">Status / Estoque</th>
+                                    <th class="p-4 text-right">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-700/60" id="menuTableBody">
+                                <!-- Renderizado via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= TAB 3: MESAS & COMANDAS ================= -->
+            <section id="tab-content-tables" class="hidden space-y-6">
+                <!-- Visão do Salão (Grid de Mesas) -->
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Mapa de Mesas do Salão</h3>
+                        <div class="flex items-center space-x-3 text-[10px]">
+                            <span class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span class="text-slate-300">Livre</span></span>
+                            <span class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span class="text-slate-300">Ocupada</span></span>
+                            <span class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span class="text-slate-300">Aguardando Conta</span></span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-3" id="tablesGrid">
+                        <!-- Renderizado via JS -->
+                    </div>
+                </div>
+
+                <!-- Painel Detalhado da Mesa Selecionada -->
+                <div id="tableDetailCard" class="bg-slate-800/90 border border-slate-700 rounded-2xl p-5 shadow-2xl">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-700 pb-4 gap-3">
+                        <div>
+                            <div class="flex items-center space-x-3">
+                                <h2 class="text-xl font-black text-white" id="selectedMesaName">Mesa 01</h2>
+                                <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold px-2.5 py-0.5 rounded-full" id="selectedMesaStatus">Ocupada</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">Cliente Responsável: <strong class="text-slate-200" id="selectedMesaClient">Carlos Eduardo</strong> • Aberta às <span id="selectedMesaTime">19:15</span></p>
+                        </div>
+
+                        <div class="flex items-center space-x-2 w-full md:w-auto">
+                            <button onclick="openAddItemToMesaModal()" class="flex-1 md:flex-none bg-slate-700 hover:bg-slate-600 text-white font-semibold text-xs px-3 py-2 rounded-xl border border-slate-600 transition flex items-center justify-center space-x-1.5">
+                                <i class="fa-solid fa-plus text-amber-400"></i>
+                                <span>Adicionar Item</span>
+                            </button>
+                            <button onclick="closeComandaModal()" class="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl shadow transition flex items-center justify-center space-x-1.5">
+                                <i class="fa-solid fa-receipt"></i>
+                                <span>Fechar & Cobrar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Consumo da Mesa -->
+                    <div class="mt-4">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Comanda de Consumo</h4>
+                        <div class="divide-y divide-slate-700/60 max-h-56 overflow-y-auto no-scrollbar" id="selectedMesaItems">
+                            <!-- Renderizado via JS -->
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-slate-700 flex justify-between items-center">
+                            <span class="text-xs text-slate-400">Total Acumulado (+10% taxa)</span>
+                            <span class="text-2xl font-black text-amber-400" id="selectedMesaTotal">R$ 0,00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= TAB 4: COZINHA & PEDIDOS (KDS) ================= -->
+            <section id="tab-content-kds" class="hidden space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Fila da Cozinha / KDS</h3>
+                    <span class="text-xs text-slate-400">Clique no card para avançar o status</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Coluna: Pendente -->
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-3 space-y-3">
+                        <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+                            <span class="text-xs font-extrabold text-rose-400 flex items-center space-x-1.5">
+                                <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                                <span>PENDENTES</span>
+                            </span>
+                            <span class="bg-rose-500/20 text-rose-300 text-[10px] font-bold px-2 py-0.5 rounded-full" id="countKdsPendente">0</span>
+                        </div>
+                        <div class="space-y-2" id="kdsPendenteList"></div>
+                    </div>
+
+                    <!-- Coluna: Em Preparo -->
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-3 space-y-3">
+                        <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+                            <span class="text-xs font-extrabold text-amber-400 flex items-center space-x-1.5">
+                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                <span>EM PREPARO</span>
+                            </span>
+                            <span class="bg-amber-500/20 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full" id="countKdsPreparo">0</span>
+                        </div>
+                        <div class="space-y-2" id="kdsPreparoList"></div>
+                    </div>
+
+                    <!-- Coluna: Pronto / Para Entrega -->
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-3 space-y-3">
+                        <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+                            <span class="text-xs font-extrabold text-emerald-400 flex items-center space-x-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span>PRONTO / SERVIR</span>
+                            </span>
+                            <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full" id="countKdsPronto">0</span>
+                        </div>
+                        <div class="space-y-2" id="kdsProntoList"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= TAB 5: FILA DE ESPERA ================= -->
+            <section id="tab-content-waitlist" class="hidden space-y-4">
+                <div class="flex justify-between items-center bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80">
+                    <div>
+                        <h3 class="font-bold text-sm text-white">Recepção & Lista de Espera</h3>
+                        <p class="text-xs text-slate-400">Gerencie clientes aguardando por mesa disponível</p>
+                    </div>
+                    <button onclick="openAddWaitlistModal()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs px-4 py-2 rounded-xl shadow transition flex items-center space-x-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Adicionar Nome</span>
+                    </button>
+                </div>
+
+                <!-- Tabela da Fila -->
+                <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl overflow-hidden shadow-xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-950 uppercase text-[10px] text-slate-400 border-b border-slate-700 font-semibold tracking-wider">
+                                <tr>
+                                    <th class="p-4">Cliente</th>
+                                    <th class="p-4">Pessoas</th>
+                                    <th class="p-4">Tempo Espera</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4 text-right">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-700/60" id="waitlistTableBody">
+                                <!-- Renderizado via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- MODAL: NOVO / EDITAR PRODUTO -->
+    <div id="productModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-5 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-white text-sm" id="productModalTitle">Cadastrar Novo Item</h3>
+                <button onclick="closeProductModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form id="productForm" onsubmit="saveProduct(event)" class="space-y-3">
+                <input type="hidden" id="prodId">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nome do Item</label>
+                    <input type="text" id="prodName" required placeholder="Ex: Filé Mignon ao Molho Madeira" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Categoria</label>
+                        <select id="prodCategory" required class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                            <option value="principais">Prato Principal</option>
+                            <option value="entradas">Entrada / Aperitivo</option>
+                            <option value="bebidas">Bebida</option>
+                            <option value="sobremesas">Sobremesa</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Preço (R$)</label>
+                        <input type="number" step="0.01" id="prodPrice" required placeholder="00.00" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Descrição do Prato/Bebida</label>
+                    <textarea id="prodDesc" rows="2" placeholder="Ingredientes principais, peso, observações..." class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex space-x-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="closeProductModal()" class="flex-1 bg-slate-800 text-slate-300 font-semibold py-2.5 rounded-xl text-xs hover:bg-slate-700 transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs hover:bg-amber-400 transition">Salvar Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADICIONAR CLIENTE À FILA DE ESPERA -->
+    <div id="waitlistModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-white text-sm">Novo Cliente na Fila</h3>
+                <button onclick="closeWaitlistModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form onsubmit="saveWaitlistClient(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nome do Cliente</label>
+                    <input type="text" id="waitName" required placeholder="Ex: Mariana Costa" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Qtd Pessoas</label>
+                        <input type="number" id="waitPeople" min="1" value="2" required class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Telefone (WhatsApp)</label>
+                        <input type="text" id="waitPhone" placeholder="(11) 99999-9999" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="flex space-x-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="closeWaitlistModal()" class="flex-1 bg-slate-800 text-slate-300 font-semibold py-2.5 rounded-xl text-xs hover:bg-slate-700 transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-sky-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs hover:bg-sky-400 transition">Adicionar à Fila</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADICIONAR ITEM NA COMANDA DA MESA -->
+    <div id="addItemToMesaModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-white text-sm">Lançar Item na Comanda</h3>
+                <button onclick="closeAddItemToMesaModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Selecionar Produto</label>
+                    <select id="selectProdMesa" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                        <!-- JS altera -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Quantidade</label>
+                    <input type="number" id="qtyProdMesa" min="1" value="1" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+
+                <div class="flex space-x-2 pt-2 border-t border-slate-800">
+                    <button onclick="closeAddItemToMesaModal()" class="flex-1 bg-slate-800 text-slate-300 font-semibold py-2.5 rounded-xl text-xs hover:bg-slate-700 transition">Cancelar</button>
+                    <button onclick="confirmAddItemToMesa()" class="flex-1 bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs hover:bg-amber-400 transition">Lançar Item</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed top-5 right-5 z-50 bg-slate-800 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-center space-x-2.5 transition-all duration-300 opacity-0 pointer-events-none transform translate-y-2">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toastMsg">Ação concluída</span>
+    </div>
+
+    <!-- JAVASCRIPT LOCAL COM DADOS DINÂMICOS -->
+    <script>
+        // DATA STATE
+        let currentMenuCategory = 'todos';
+        let selectedMesaId = 1;
+
+        // CARDÁPIO LOCAL
+        let menuItems = [
+            { id: 1, name: "Combo Burger Craft + Fritas", category: "principais", price: 38.90, desc: "Hambúrguer artesanal 180g com batatas rústicas", active: true },
+            { id: 2, name: "Batata Rústica com Gouda & Bacon", category: "entradas", price: 28.00, desc: "Porção de 400g com queijo derretido e bacon", active: true },
+            { id: 3, name: "Dadinhos de Tapioca (8 un)", category: "entradas", price: 24.50, desc: "Acompanha geleia artesanal de pimenta", active: true },
+            { id: 4, name: "Chopp IPA Artesanal 500ml", category: "bebidas", price: 18.00, desc: "Chopp gelado especial da casa", active: true },
+            { id: 5, name: "Suco Natural de Laranja 400ml", category: "bebidas", price: 9.50, desc: "Cítrico 100% fruta fresca", active: true },
+            { id: 6, name: "Brownie Supremo com Sorvete", category: "sobremesas", price: 22.00, desc: "Brownie quente de chocolate com baunilha", active: false },
+            { id: 7, name: "Risoto de Cogumelos Frescos", category: "principais", price: 46.00, desc: "Arroz arbório e azeite trufado", active: true }
+        ];
+
+        // MESAS LOCAL
+        let tables = [
+            { id: 1, name: "Mesa 01", status: "ocupada", client: "Carlos Eduardo", time: "19:15", items: [{ name: "Combo Burger Craft", qty: 2, price: 38.90 }, { name: "Chopp IPA", qty: 2, price: 18.00 }] },
+            { id: 2, name: "Mesa 02", status: "ocupada", client: "Fernanda Lima", time: "19:30", items: [{ name: "Risoto de Cogumelos", qty: 1, price: 46.00 }, { name: "Suco Natural", qty: 1, price: 9.50 }] },
+            { id: 3, name: "Mesa 03", status: "livre", client: "-", time: "-", items: [] },
+            { id: 4, name: "Mesa 04", status: "ocupada", client: "Lucas Silva", time: "20:00", items: [{ name: "Batata Rústica", qty: 1, price: 28.00 }, { name: "Chopp IPA", qty: 1, price: 18.00 }] },
+            { id: 5, name: "Mesa 05", status: "conta", client: "Roberto Alves", time: "18:45", items: [{ name: "Dadinhos de Tapioca", qty: 2, price: 24.50 }, { name: "Chopp IPA", qty: 4, price: 18.00 }] },
+            { id: 6, name: "Mesa 06", status: "livre", client: "-", time: "-", items: [] },
+            { id: 7, name: "Mesa 07", status: "livre", client: "-", time: "-", items: [] },
+            { id: 8, name: "Mesa 08", status: "ocupada", client: "Beatriz Ramos", time: "20:10", items: [{ name: "Combo Burger Craft", qty: 1, price: 38.90 }] }
+        ];
+
+        // COZINHA (KDS)
+        let kdsOrders = [
+            { id: 101, mesa: "Mesa 04", item: "1x Batata Rústica com Gouda", time: "12 min", status: "pendente" },
+            { id: 102, mesa: "Mesa 08", item: "1x Combo Burger Craft", time: "5 min", status: "pendente" },
+            { id: 103, mesa: "Mesa 01", item: "2x Chopp IPA Artesanal", time: "18 min", status: "preparo" },
+            { id: 104, mesa: "Mesa 02", item: "1x Risoto de Cogumelos", time: "22 min", status: "pronto" }
+        ];
+
+        // FILA DE ESPERA
+        let waitlist = [
+            { id: 1, name: "Juliana Mendes", people: 4, time: "15 min", phone: "(11) 98888-1122", status: "aguardando" },
+            { id: 2, name: "Marcelo Rossi", people: 2, time: "28 min", phone: "(11) 97777-3344", status: "aguardando" },
+            { id: 3, name: "Camila Rocha", people: 6, time: "5 min", phone: "(11) 96666-5566", status: "chamado" },
+            { id: 4, name: "André Martins", people: 2, time: "40 min", phone: "(11) 95555-7788", status: "aguardando" }
+        ];
+
+        // INIT
+        window.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            document.getElementById('currentDate').innerText = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
+
+            renderMenuTable();
+            renderTablesGrid();
+            renderSelectedMesaDetail();
+            renderKDS();
+            renderWaitlist();
+            renderDashWaitlistSummary();
+        });
+
+        // TROCA DE ABAS
+        function switchTab(tabId) {
+            const tabs = ['dashboard', 'menu', 'tables', 'kds', 'waitlist'];
+            const titles = {
+                dashboard: "Visão Geral & KPIs",
+                menu: "Gestão do Cardápio",
+                tables: "Gestão de Mesas & Comandas",
+                kds: "KDS & Monitor da Cozinha",
+                waitlist: "Fila de Espera da Recepção"
+            };
+
+            tabs.forEach(t => {
+                const content = document.getElementById(`tab-content-${t}`);
+                const btn = document.getElementById(`nav-${t}`);
+                if (t === tabId) {
+                    content.classList.remove('hidden');
+                    btn.className = "nav-btn active w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 transition";
+                } else {
+                    content.classList.add('hidden');
+                    btn.className = "nav-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800/60 hover:text-white transition";
+                }
+            });
+
+            document.getElementById('pageTitle').innerText = titles[tabId];
+        }
+
+        // ================= GESTÃO DO CARDÁPIO =================
+        function filterMenuCategory(cat) {
+            currentMenuCategory = cat;
+            document.querySelectorAll('.menu-cat-btn').forEach(btn => {
+                btn.className = "menu-cat-btn bg-slate-900 border border-slate-700 text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap hover:border-amber-500";
+            });
+            event.currentTarget.className = "menu-cat-btn active bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap";
+            renderMenuTable();
+        }
+
+        function renderMenuTable() {
+            const tbody = document.getElementById('menuTableBody');
+            const search = document.getElementById('menuSearchInput').value.toLowerCase();
+            tbody.innerHTML = '';
+
+            const filtered = menuItems.filter(item => {
+                const matchCat = currentMenuCategory === 'todos' || item.category === currentMenuCategory;
+                const matchSearch = item.name.toLowerCase().includes(search) || item.desc.toLowerCase().includes(search);
+                return matchCat && matchSearch;
+            });
+
+            filtered.forEach(item => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-800/50 transition">
+                        <td class="p-4">
+                            <div class="font-bold text-white text-xs">${item.name}</div>
+                            <div class="text-[10px] text-slate-400 truncate max-w-xs">${item.desc}</div>
+                        </td>
+                        <td class="p-4">
+                            <span class="bg-slate-900 border border-slate-700 text-slate-300 text-[10px] font-semibold px-2 py-0.5 rounded-md uppercase">
+                                ${item.category}
+                            </span>
+                        </td>
+                        <td class="p-4 font-bold text-amber-400">R$ ${item.price.toFixed(2).replace('.', ',')}</td>
+                        <td class="p-4">
+                            <button onclick="toggleProductStatus(${item.id})" class="flex items-center space-x-1.5 focus:outline-none">
+                                <span class="w-2.5 h-2.5 rounded-full ${item.active ? 'bg-emerald-400' : 'bg-rose-500'}"></span>
+                                <span class="text-[11px] font-semibold ${item.active ? 'text-emerald-400' : 'text-rose-400'}">
+                                    ${item.active ? 'Disponível' : 'Esgotado'}
+                                </span>
+                            </button>
+                        </td>
+                        <td class="p-4 text-right space-x-1">
+                            <button onclick="editProduct(${item.id})" class="p-1.5 rounded-lg bg-slate-900 text-slate-300 hover:text-amber-400 hover:bg-slate-800 transition">
+                                <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                            <button onclick="deleteProduct(${item.id})" class="p-1.5 rounded-lg bg-slate-900 text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function toggleProductStatus(id) {
+            const prod = menuItems.find(p => p.id === id);
+            if (prod) {
+                prod.active = !prod.active;
+                renderMenuTable();
+                showToast(`Status de "${prod.name}" alterado para ${prod.active ? 'Disponível' : 'Esgotado'}`);
+            }
+        }
+
+        function openNewProductModal() {
+            document.getElementById('productForm').reset();
+            document.getElementById('prodId').value = '';
+            document.getElementById('productModalTitle').innerText = 'Cadastrar Novo Item';
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function editProduct(id) {
+            const prod = menuItems.find(p => p.id === id);
+            if (prod) {
+                document.getElementById('prodId').value = prod.id;
+                document.getElementById('prodName').value = prod.name;
+                document.getElementById('prodCategory').value = prod.category;
+                document.getElementById('prodPrice').value = prod.price;
+                document.getElementById('prodDesc').value = prod.desc;
+                
+                document.getElementById('productModalTitle').innerText = 'Editar Item do Cardápio';
+                document.getElementById('productModal').classList.remove('hidden');
+            }
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        function saveProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('prodId').value;
+            const name = document.getElementById('prodName').value;
+            const category = document.getElementById('prodCategory').value;
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            const desc = document.getElementById('prodDesc').value;
+
+            if (id) {
+                const prod = menuItems.find(p => p.id == id);
+                if (prod) {
+                    prod.name = name;
+                    prod.category = category;
+                    prod.price = price;
+                    prod.desc = desc;
+                    showToast('Item atualizado com sucesso!');
+                }
+            } else {
+                menuItems.push({
+                    id: Date.now(),
+                    name,
+                    category,
+                    price,
+                    desc,
+                    active: true
+                });
+                showToast('Novo item cadastrado no cardápio!');
+            }
+
+            closeProductModal();
+            renderMenuTable();
+        }
+
+        function deleteProduct(id) {
+            menuItems = menuItems.filter(p => p.id !== id);
+            renderMenuTable();
+            showToast('Item removido do cardápio', 'fa-trash');
+        }
+
+        // ================= GESTÃO DE MESAS & COMANDAS =================
+        function renderTablesGrid() {
+            const grid = document.getElementById('tablesGrid');
+            grid.innerHTML = '';
+
+            tables.forEach(t => {
+                let statusColor = "border-slate-700 bg-slate-800/80";
+                let badgeColor = "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
+                
+                if (t.status === 'ocupada') {
+                    statusColor = "border-amber-500/50 bg-amber-500/5";
+                    badgeColor = "bg-amber-500/20 text-amber-400 border-amber-500/30";
+                } else if (t.status === 'conta') {
+                    statusColor = "border-rose-500/50 bg-rose-500/5 animate-pulse";
+                    badgeColor = "bg-rose-500/20 text-rose-400 border-rose-500/30";
+                }
+
+                const isSelected = t.id === selectedMesaId ? "ring-2 ring-amber-400" : "";
+
+                grid.innerHTML += `
+                    <div onclick="selectMesa(${t.id})" class="cursor-pointer border rounded-2xl p-3 flex flex-col justify-between h-28 transition hover:scale-102 ${statusColor} ${isSelected}">
+                        <div class="flex justify-between items-start">
+                            <span class="font-extrabold text-sm text-white">${t.name}</span>
+                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase ${badgeColor}">${t.status}</span>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400 truncate">${t.client}</p>
+                            <p class="text-xs font-black text-amber-400 mt-1">${t.items.length > 0 ? 'R$ ' + calculateMesaTotal(t).toFixed(2).replace('.', ',') : '-'}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function selectMesa(id) {
+            selectedMesaId = id;
+            renderTablesGrid();
+            renderSelectedMesaDetail();
+        }
+
+        function calculateMesaTotal(mesa) {
+            const subtotal = mesa.items.reduce((acc, i) => acc + (i.price * i.qty), 0);
+            return subtotal * 1.10; // Taxa de serviço 10%
+        }
+
+        function renderSelectedMesaDetail() {
+            const mesa = tables.find(t => t.id === selectedMesaId);
+            if (!mesa) return;
+
+            document.getElementById('selectedMesaName').innerText = mesa.name;
+            document.getElementById('selectedMesaStatus').innerText = mesa.status.toUpperCase();
+            document.getElementById('selectedMesaClient').innerText = mesa.client;
+            document.getElementById('selectedMesaTime').innerText = mesa.time;
+
+            const itemsContainer = document.getElementById('selectedMesaItems');
+            itemsContainer.innerHTML = '';
+
+            if (mesa.items.length === 0) {
+                itemsContainer.innerHTML = `<p class="text-xs text-slate-500 py-4 text-center">Nenhum consumo registrado nesta mesa.</p>`;
+            } else {
+                mesa.items.forEach(i => {
+                    itemsContainer.innerHTML += `
+                        <div class="py-2.5 flex justify-between items-center text-xs">
+                            <div>
+                                <p class="font-bold text-white">${i.qty}x ${i.name}</p>
+                                <span class="text-[10px] text-slate-400">R$ ${i.price.toFixed(2).replace('.', ',')} un</span>
+                            </div>
+                            <span class="font-extrabold text-amber-400">R$ ${(i.price * i.qty).toFixed(2).replace('.', ',')}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('selectedMesaTotal').innerText = `R$ ${calculateMesaTotal(mesa).toFixed(2).replace('.', ',')}`;
+        }
+
+        function openAddItemToMesaModal() {
+            const select = document.getElementById('selectProdMesa');
+            select.innerHTML = '';
+            menuItems.filter(m => m.active).forEach(m => {
+                select.innerHTML += `<option value="${m.id}">${m.name} - R$ ${m.price.toFixed(2)}</option>`;
+            });
+            document.getElementById('addItemToMesaModal').classList.remove('hidden');
+        }
+
+        function closeAddItemToMesaModal() {
+            document.getElementById('addItemToMesaModal').classList.add('hidden');
+        }
+
+        function confirmAddItemToMesa() {
+            const prodId = document.getElementById('selectProdMesa').value;
+            const qty = parseInt(document.getElementById('qtyProdMesa').value);
+            const prod = menuItems.find(m => m.id == prodId);
+            const mesa = tables.find(t => t.id === selectedMesaId);
+
+            if (prod && mesa) {
+                if (mesa.status === 'livre') {
+                    mesa.status = 'ocupada';
+                    mesa.client = 'Cliente Avulso';
+                    mesa.time = 'Agora';
+                }
+                mesa.items.push({ name: prod.name, qty: qty, price: prod.price });
+                closeAddItemToMesaModal();
+                renderTablesGrid();
+                renderSelectedMesaDetail();
+                showToast(`Item adicionado à ${mesa.name}`);
+            }
+        }
+
+        function closeComandaModal() {
+            const mesa = tables.find(t => t.id === selectedMesaId);
+            if (mesa && mesa.status !== 'livre') {
+                const total = calculateMesaTotal(mesa).toFixed(2);
+                mesa.status = 'livre';
+                mesa.client = '-';
+                mesa.time = '-';
+                mesa.items = [];
+                renderTablesGrid();
+                renderSelectedMesaDetail();
+                showToast(`Comanda fechada com sucesso! Valor pago: R$ ${total}`, 'fa-receipt');
+            }
+        }
+
+        // ================= KDS / COZINHA =================
+        function renderKDS() {
+            const pendenteList = document.getElementById('kdsPendenteList');
+            const preparoList = document.getElementById('kdsPreparoList');
+            const prontoList = document.getElementById('kdsProntoList');
+
+            pendenteList.innerHTML = '';
+            preparoList.innerHTML = '';
+            prontoList.innerHTML = '';
+
+            let countP = 0, countPrep = 0, countPr = 0;
+
+            kdsOrders.forEach(order => {
+                const card = `
+                    <div onclick="advanceKDS(${order.id})" class="p-3 bg-slate-900 border border-slate-700/80 rounded-xl hover:border-amber-400 cursor-pointer transition space-y-1.5 shadow">
+                        <div class="flex justify-between items-center">
+                            <span class="font-extrabold text-xs text-white">${order.mesa}</span>
+                            <span class="text-[10px] font-semibold text-slate-400"><i class="fa-solid fa-clock text-[9px]"></i> ${order.time}</span>
+                        </div>
+                        <p class="text-xs font-bold text-amber-400">${order.item}</p>
+                    </div>
+                `;
+
+                if (order.status === 'pendente') {
+                    pendenteList.innerHTML += card;
+                    countP++;
+                } else if (order.status === 'preparo') {
+                    preparoList.innerHTML += card;
+                    countPrep++;
+                } else {
+                    prontoList.innerHTML += card;
+                    countPr++;
+                }
+            });
+
+            document.getElementById('countKdsPendente').innerText = countP;
+            document.getElementById('countKdsPreparo').innerText = countPrep;
+            document.getElementById('countKdsPronto').innerText = countPr;
+            document.getElementById('pendingOrdersBadge').innerText = countP;
+        }
+
+        function advanceKDS(id) {
+            const order = kdsOrders.find(o => o.id === id);
+            if (order) {
+                if (order.status === 'pendente') order.status = 'preparo';
+                else if (order.status === 'preparo') order.status = 'pronto';
+                else kdsOrders = kdsOrders.filter(o => o.id !== id);
+
+                renderKDS();
+                showToast(`Pedido #${id} avançado!`);
+            }
+        }
+
+        // ================= FILA DE ESPERA =================
+        function renderWaitlist() {
+            const tbody = document.getElementById('waitlistTableBody');
+            tbody.innerHTML = '';
+
+            waitlist.forEach(w => {
+                let badgeClass = "bg-amber-500/20 text-amber-400 border-amber-500/30";
+                if (w.status === 'chamado') badgeClass = "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-800/50 transition">
+                        <td class="p-4">
+                            <div class="font-bold text-white text-xs">${w.name}</div>
+                            <div class="text-[10px] text-slate-400">${w.phone}</div>
+                        </td>
+                        <td class="p-4 font-bold text-slate-200">${w.people} Pessoas</td>
+                        <td class="p-4 text-slate-400 text-xs">${w.time}</td>
+                        <td class="p-4">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${badgeClass}">${w.status}</span>
+                        </td>
+                        <td class="p-4 text-right space-x-1">
+                            <button onclick="callWaitlistClient(${w.id})" class="p-1.5 rounded-lg bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600 hover:text-white transition">
+                                <i class="fa-solid fa-bullhorn text-xs"></i>
+                            </button>
+                            <button onclick="removeWaitlistClient(${w.id})" class="p-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('waitlistCountBadge').innerText = waitlist.length;
+        }
+
+        function renderDashWaitlistSummary() {
+            const container = document.getElementById('dashWaitlistSummary');
+            container.innerHTML = '';
+
+            waitlist.slice(0, 3).forEach(w => {
+                container.innerHTML += `
+                    <div class="py-2.5 flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-white">${w.name} (${w.people}p)</p>
+                            <span class="text-[10px] text-slate-400">Aguardando há ${w.time}</span>
+                        </div>
+                        <button onclick="callWaitlistClient(${w.id})" class="bg-slate-800 hover:bg-slate-700 text-amber-400 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-slate-700 transition">Chamar</button>
+                    </div>
+                `;
+            });
+        }
+
+        function openAddWaitlistModal() {
+            document.getElementById('waitlistModal').classList.remove('hidden');
+        }
+
+        function closeWaitlistModal() {
+            document.getElementById('waitlistModal').classList.add('hidden');
+        }
+
+        function saveWaitlistClient(e) {
+            e.preventDefault();
+            const name = document.getElementById('waitName').value;
+            const people = parseInt(document.getElementById('waitPeople').value);
+            const phone = document.getElementById('waitPhone').value;
+
+            waitlist.push({
+                id: Date.now(),
+                name,
+                people,
+                phone,
+                time: "Agora",
+                status: "aguardando"
+            });
+
+            closeWaitlistModal();
+            renderWaitlist();
+            renderDashWaitlistSummary();
+            showToast('Cliente inserido na fila de espera!');
+        }
+
+        function callWaitlistClient(id) {
+            const client = waitlist.find(w => w.id === id);
+            if (client) {
+                client.status = "chamado";
+                renderWaitlist();
+                renderDashWaitlistSummary();
+                showToast(`Cliente ${client.name} chamado para acomodação!`, 'fa-bullhorn');
+            }
+        }
+
+        function removeWaitlistClient(id) {
+            waitlist = waitlist.filter(w => w.id !== id);
+            renderWaitlist();
+            renderDashWaitlistSummary();
+            showToast('Cliente removido da fila', 'fa-trash');
+        }
+
+        function resolveAlert(btn) {
+            btn.parentElement.remove();
+            showToast('Atendimento registrado e concluído!');
+        }
+
+        // TOAST NOTIFICATION
+        function showToast(message, icon = 'fa-circle-check') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = message;
+            document.getElementById('toastIcon').className = `fa-solid ${icon} text-amber-400`;
+
+            toast.classList.remove('opacity-0', 'translate-y-2', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2', 'pointer-events-none');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
