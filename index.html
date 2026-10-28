@@ -207,8 +207,8 @@
         <hr class="border-slate-800 my-2">
         <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">CEP</label>
-            <input type="text" id="valCep" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
+            <label class="block text-xs font-semibold text-slate-300 mb-1">CEP *</label>
+            <input type="text" id="valCep" required maxlength="9" onblur="validarCampoBlur('valCep', validarCep, 'CEP inválido. Deve conter exatamente 8 dígitos numéricos.')" placeholder="00000-000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
           </div>
           <div class="col-span-2">
             <label class="block text-xs font-semibold text-slate-300 mb-1">Cidade</label>
@@ -264,7 +264,7 @@
     const SUPABASE_ANON_KEY = "sb_publishable_eH09_dM0w0DreGw8JOx7mg_P1w3rZGC"; 
     
     let supabaseClient = null;
-    let cpfCnpjComErroDuplicidade = false; // Flag para bloquear avanço enquanto houver duplicidade
+    let cpfCnpjComErroDuplicidade = false;
 
     try {
       if(SUPABASE_URL.includes("http") && !SUPABASE_URL.includes("SEU_PROJETO")) {
@@ -283,6 +283,7 @@
       document.getElementById('formValidacaoCompleta').classList.add('hidden');
       document.getElementById('formSenha').classList.add('hidden');
       document.getElementById('formRegister').classList.remove('hidden');
+      document.getElementById('formLogin').classList.remove('hidden');
       cpfCnpjComErroDuplicidade = false;
     }
 
@@ -334,7 +335,7 @@
       }
     }
 
-    // --- VALIDAÇÕES DE CPF/CNPJ (MATEMÁTICA E DUPLICIDADE) ---
+    // --- VALIDAÇÕES ---
     function validarCpf(cpf) {
       cpf = cpf.replace(/\D/g, '');
       if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
@@ -403,7 +404,6 @@
 
       if (valor === "") return;
 
-      // 1. Validação matemática inicial
       if (!validarCpfOuCnpjReal(valor)) {
         cpfCnpjComErroDuplicidade = true;
         showAlert("❌ CPF ou CNPJ inválido ou inexistente. Por favor, corrija.", "error");
@@ -412,7 +412,6 @@
         return;
       }
 
-      // 2. Validação de duplicidade no banco de dados
       showAlert("Verificando disponibilidade no banco...", "info");
       const jaExiste = await verificarCpfCnpjNoBanco(valor);
 
@@ -438,6 +437,11 @@
       return regex.test(email);
     }
 
+    function validarCep(valor) {
+      const limpo = valor.replace(/\D/g, '');
+      return limpo.length === 8;
+    }
+
     function validarCampoBlur(idInput, funcaoValidacao, mensagemErro) {
       const campo = document.getElementById(idInput);
       const valor = campo.value.trim();
@@ -450,11 +454,11 @@
         showAlert("", "hidden");
       }
     }
-    // -----------------------------------------------------
 
+    // --- VALIDAÇÃO DE LOGIN NO BANCO DE DADOS ---
     async function handleLogin(e) {
       e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
+      const email = document.getElementById('loginEmail').value.trim();
       const password = document.getElementById('loginPassword').value;
 
       if (!validarEmail(email)) {
@@ -463,18 +467,41 @@
         return;
       }
 
-      showAlert("Autenticando...", "info");
+      showAlert("Autenticando estabelecimento...", "info");
 
-      if (supabaseClient) {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (!supabaseClient) {
+        showAlert("Erro: Cliente Supabase não inicializado.", "error");
+        return;
+      }
+
+      try {
+        // Consulta na tabela clientes_estabelecimentos pelo e-mail e senha informados
+        const { data, error } = await supabaseClient
+          .from('clientes_estabelecimentos')
+          .select('*')
+          .eq('email_admin', email)
+          .eq('senha', password);
+
         if (error) {
-          showAlert("Erro ao entrar: " + error.message, "error");
-        } else {
-          showAlert("Login realizado com sucesso! Redirecionando...", "success");
-          setTimeout(() => { window.location.href = "cardapio.html"; }, 1500);
+          console.error("Erro na consulta de login:", error);
+          showAlert("Erro ao tentar acessar o sistema.", "error");
+          return;
         }
-      } else {
-        setTimeout(() => { showAlert("Login simulado com sucesso!", "success"); }, 1000);
+
+        if (data && data.length > 0) {
+          // Login bem-sucedido
+          showAlert("✅ Login realizado com sucesso! Redirecionando...", "success");
+          setTimeout(() => {
+            window.location.href = "pag_inicial"; // Redireciona para a página inicial do estabelecimento
+          }, 1500);
+        } else {
+          // Credenciais inválidas (e-mail não existe ou senha incorreta)
+          showAlert("❌ E-mail ou senha incorretos. Verifique seus dados.", "error");
+        }
+
+      } catch (err) {
+        console.error("Exceção no login:", err);
+        showAlert("Erro inesperado ao conectar com o banco de dados.", "error");
       }
     }
 
@@ -486,7 +513,6 @@
       const telefone = document.getElementById('regPhone').value;
       const email = document.getElementById('regEmail').value;
 
-      // Se houver erro de duplicidade pendente, bloqueia o avanço imediatamente e mantém a mensagem
       if (cpfCnpjComErroDuplicidade) {
         showAlert("⚠️ Este CPF ou CNPJ já possui cadastro no sistema! Corrija para continuar.", "error");
         cpfCnpjInput.focus();
@@ -543,11 +569,22 @@
 
       const valCpfInput = document.getElementById('valCpfCnpj');
       const cpfCnpj = valCpfInput.value;
+      const cepInput = document.getElementById('valCep');
+      const cep = cepInput.value;
 
       if (cpfCnpjComErroDuplicidade || !validarCpfOuCnpjReal(cpfCnpj)) {
         showAlert("⚠️ CPF ou CNPJ inválido ou já cadastrado. Corrija no campo para prosseguir.", "error");
         valCpfInput.focus();
         return;
+      }
+
+      if (!validarCep(cep)) {
+        showAlert("⚠️ CEP inválido. O CEP deve conter exatamente 8 dígitos numéricos.", "error");
+        cepInput.classList.add("border-rose-500");
+        cepInput.focus();
+        return;
+      } else {
+        cepInput.classList.remove("border-rose-500");
       }
 
       const jaExiste = await verificarCpfCnpjNoBanco(cpfCnpj);
@@ -567,6 +604,13 @@
 
     async function salvarCadastroFinal(e) {
       e.preventDefault();
+
+      const cep = document.getElementById('valCep').value;
+      if (!validarCep(cep)) {
+        showAlert("⚠️ CEP inválido. O CEP deve conter exatamente 8 dígitos numéricos.", "error");
+        document.getElementById('valCep').focus();
+        return;
+      }
 
       const senha = document.getElementById('regPassword').value;
       const confirmaSenha = document.getElementById('regPasswordConfirm').value;
@@ -590,7 +634,7 @@
         telefone: document.getElementById('valPhone').value,
         segmento: document.getElementById('valSegment').value,
         email_admin: document.getElementById('valEmail').value,
-        cep: document.getElementById('valCep').value,
+        cep: cep,
         cidade: document.getElementById('valCidade').value,
         logradouro: document.getElementById('valLogradouro').value,
         num_casa: document.getElementById('valNumCasa').value,
