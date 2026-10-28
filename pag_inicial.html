@@ -70,7 +70,7 @@
                 <button onclick="switchTab('tables')" id="nav-tables" class="nav-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800/60 hover:text-white transition">
                     <i class="fa-solid fa-chair w-4 text-center"></i>
                     <span>Mesas & Comandas</span>
-                    <span class="ml-auto bg-amber-500 text-slate-950 font-bold text-[10px] px-1.5 py-0.2 rounded-full" id="activeTablesBadge">5</span>
+                    <span class="ml-auto bg-amber-500 text-slate-950 font-bold text-[10px] px-1.5 py-0.2 rounded-full" id="activeTablesBadge">8</span>
                 </button>
                 <button onclick="switchTab('kds')" id="nav-kds" class="nav-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800/60 hover:text-white transition">
                     <i class="fa-solid fa-kitchen-set w-4 text-center"></i>
@@ -123,9 +123,9 @@
                     <i class="fa-solid fa-user-plus text-amber-400"></i>
                     <span>+ Fila de Espera</span>
                 </button>
-                <button onclick="openNewProductModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg shadow-md transition flex items-center space-x-2">
-                    <i class="fa-solid fa-plus text-xs"></i>
-                    <span>Novo Prato/Bebida</span>
+                <button onclick="switchTab('menu')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg shadow-md transition flex items-center space-x-2">
+                    <i class="fa-solid fa-book-open text-xs"></i>
+                    <span>Gestão do Cardápio</span>
                 </button>
             </div>
         </header>
@@ -518,6 +518,37 @@
                 return;
             }
 
+            // Se o usuário clicar em Mesas & Comandas, exibe o prompt para perguntar a quantidade de mesas
+            if (tabId === 'tables') {
+                let entrada = prompt("Informe a quantidade de mesas do salão:", tables.length);
+                if (entrada !== null) {
+                    let qtd = parseInt(entrada);
+                    if (!isNaN(qtd) && qtd > 0) {
+                        tables = [];
+                        for (let i = 1; i <= qtd; i++) {
+                            let numeroFormatado = String(i).padStart(2, '0');
+                            tables.push({
+                                id: i,
+                                name: `Mesa ${numeroFormatado}`,
+                                status: "livre",
+                                client: "-",
+                                time: "-",
+                                items: []
+                            });
+                        }
+                        selectedMesaId = 1;
+                        renderTablesGrid();
+                        renderSelectedMesaDetail();
+                        showToast(`Mapa de mesas atualizado com ${qtd} mesas!`);
+                    } else {
+                        alert("Por favor, digite um número válido maior que zero.");
+                        return; // Se cancelar ou digitar inválido, mantém na aba atual
+                    }
+                } else {
+                    return; // Se fechar o prompt, não troca de aba
+                }
+            }
+
             const tabs = ['dashboard', 'tables', 'kds', 'waitlist'];
             const titles = {
                 dashboard: "Visão Geral & KPIs",
@@ -530,20 +561,23 @@
                 const content = document.getElementById(`tab-content-${t}`);
                 const btn = document.getElementById(`nav-${t}`);
                 if (t === tabId) {
-                    content.classList.remove('hidden');
-                    btn.className = "nav-btn active w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 transition";
+                    if (content) content.classList.remove('hidden');
+                    if (btn) btn.className = "nav-btn active w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 transition";
                 } else {
                     if (content) content.classList.add('hidden');
-                    btn.className = "nav-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800/60 hover:text-white transition";
+                    if (btn) btn.className = "nav-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800/60 hover:text-white transition";
                 }
             });
 
-            document.getElementById('pageTitle').innerText = titles[tabId];
+            if (titles[tabId]) {
+                document.getElementById('pageTitle').innerText = titles[tabId];
+            }
         }
 
         // ================= GESTÃO DE MESAS & COMANDAS =================
         function renderTablesGrid() {
             const grid = document.getElementById('tablesGrid');
+            if (!grid) return;
             grid.innerHTML = '';
 
             tables.forEach(t => {
@@ -573,6 +607,8 @@
                     </div>
                 `;
             });
+            const badge = document.getElementById('activeTablesBadge');
+            if (badge) badge.innerText = tables.length;
         }
 
         function selectMesa(id) {
@@ -669,6 +705,7 @@
             const pendenteList = document.getElementById('kdsPendenteList');
             const preparoList = document.getElementById('kdsPreparoList');
             const prontoList = document.getElementById('kdsProntoList');
+            if (!pendenteList) return;
 
             pendenteList.innerHTML = '';
             preparoList.innerHTML = '';
@@ -720,6 +757,7 @@
         // ================= FILA DE ESPERA =================
         function renderWaitlist() {
             const tbody = document.getElementById('waitlistTableBody');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
             waitlist.forEach(w => {
@@ -754,6 +792,7 @@
 
         function renderDashWaitlistSummary() {
             const container = document.getElementById('dashWaitlistSummary');
+            if (!container) return;
             container.innerHTML = '';
 
             waitlist.slice(0, 3).forEach(w => {
