@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
         tailwind.config = {
@@ -257,13 +259,19 @@
             <section id="tab-content-tables" class="hidden space-y-6">
                 <!-- Visão do Salão (Grid de Mesas) -->
                 <div>
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Mapa de Mesas do Salão</h3>
-                        <div class="flex items-center space-x-3 text-[10px]">
-                            <span class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span class="text-slate-300">Livre</span></span>
-                            <span class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span class="text-slate-300">Ocupada</span></span>
-                            <span class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span class="text-slate-300">Aguardando Conta</span></span>
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                        <div>
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Mapa de Mesas do Salão</h3>
+                            <div class="flex items-center space-x-3 text-[10px] mt-1">
+                                <span class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span class="text-slate-300">Livre</span></span>
+                                <span class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span class="text-slate-300">Ocupada</span></span>
+                                <span class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span class="text-slate-300">Aguardando Conta</span></span>
+                            </div>
                         </div>
+                        <button onclick="openManageTablesModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl shadow transition flex items-center space-x-2">
+                            <i class="fa-solid fa-sliders"></i>
+                            <span>Gerenciar Mesas (+ / -)</span>
+                        </button>
                     </div>
 
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-3" id="tablesGrid">
@@ -431,6 +439,29 @@
         </div>
     </main>
 
+    <!-- MODAL: GERENCIAR QUANTIDADE DE MESAS -->
+    <div id="manageTablesModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-white text-sm">Gerenciar Quantidade de Mesas</h3>
+                <button onclick="closeManageTablesModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="space-y-3">
+                <p class="text-xs text-slate-400">Informe a quantidade total de mesas desejadas para o salão:</p>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Quantidade de Mesas</label>
+                    <input type="number" id="inputManageTablesQty" min="1" max="50" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+
+                <div class="flex space-x-2 pt-2 border-t border-slate-800">
+                    <button onclick="closeManageTablesModal()" class="flex-1 bg-slate-800 text-slate-300 font-semibold py-2.5 rounded-xl text-xs hover:bg-slate-700 transition">Cancelar</button>
+                    <button onclick="confirmManageTables()" class="flex-1 bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs hover:bg-amber-400 transition">Atualizar Mesas</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: ADICIONAR CLIENTE À FILA DE ESPERA -->
     <div id="waitlistModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center hidden p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
@@ -474,9 +505,9 @@
 
             <div class="space-y-3">
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Selecionar Produto</label>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Selecionar Produto (Cardápio)</label>
                     <select id="selectProdMesa" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                        <!-- JS altera -->
+                        <option value="">Carregando itens do banco...</option>
                     </select>
                 </div>
                 <div>
@@ -498,31 +529,50 @@
         <span id="toastMsg">Ação concluída</span>
     </div>
 
-    <!-- JAVASCRIPT COM LOCALSTORAGE E HISTÓRICO GERENCIAL -->
+    <!-- JAVASCRIPT COM SUPABASE, LOCALSTORAGE E HISTÓRICO GERENCIAL -->
     <script>
+        // CONFIGURAÇÃO DO SUPABASE (Insira sua URL e chave publica/anon do seu projeto)
+        const SUPABASE_URL = 'https://ubtgyzcdvumfxgujpshz.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_eH09_dM0w0DreGw8JOx7mg_P1w3rZGC';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         let selectedMesaId = 1;
 
-        // CARDÁPIO LOCAL
-        let menuItems = [
-            { id: 1, name: "Combo Burger Craft + Fritas", category: "principais", price: 38.90, desc: "Hambúrguer artesanal 180g com batatas rústicas", active: true },
-            { id: 2, name: "Batata Rústica com Gouda & Bacon", category: "entradas", price: 28.00, desc: "Porção de 400g com queijo derretido e bacon", active: true },
-            { id: 3, name: "Dadinhos de Tapioca (8 un)", category: "entradas", price: 24.50, desc: "Acompanha geleia artesanal de pimenta", active: true },
-            { id: 4, name: "Chopp IPA Artesanal 500ml", category: "bebidas", price: 18.00, desc: "Chopp gelado especial da casa", active: true },
-            { id: 5, name: "Suco Natural de Laranja 400ml", category: "bebidas", price: 9.50, desc: "Cítrico 100% fruta fresca", active: true },
-            { id: 6, name: "Brownie Supremo com Sorvete", category: "sobremesas", price: 22.00, desc: "Brownie quente de chocolate com baunilha", active: false },
-            { id: 7, name: "Risoto de Cogumelos Frescos", category: "principais", price: 46.00, desc: "Arroz arbório e azeite trufado", active: true }
-        ];
+        // CARDÁPIO CARREGADO DO BANCO DE DADOS (tabela: cardapio)
+        let menuItems = [];
+
+        async function carregarCardapioDoBanco() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('cardapio')
+                    .select('*');
+                
+                if (error) {
+                    console.error('Erro ao buscar cardápio do Supabase:', error);
+                    // Fallback local caso ocorra erro na conexão
+                    menuItems = [
+                        { id: 1, nome: "Combo Burger Craft + Fritas", preco_venda: 38.90 },
+                        { id: 2, nome: "Batata Rústica", preco_venda: 28.00 },
+                        { id: 3, nome: "Chopp IPA Artesanal", preco_venda: 18.00 }
+                    ];
+                } else if (data) {
+                    menuItems = data;
+                }
+            } catch (err) {
+                console.error('Erro de conexão com o Supabase:', err);
+            }
+        }
 
         // CARREGAR MESAS DO LOCALSTORAGE OU GERAR 11 MESAS COMO PADRÃO
         let tables = JSON.parse(localStorage.getItem('smartcomanda_tables')) || [
-            { id: 1, name: "Mesa 01", status: "ocupada", client: "Carlos Eduardo", time: "19:15", items: [{ name: "Combo Burger Craft", qty: 2, price: 38.90 }, { name: "Chopp IPA", qty: 2, price: 18.00 }] },
-            { id: 2, name: "Mesa 02", status: "ocupada", client: "Fernanda Lima", time: "19:30", items: [{ name: "Risoto de Cogumelos", qty: 1, price: 46.00 }, { name: "Suco Natural", qty: 1, price: 9.50 }] },
+            { id: 1, name: "Mesa 01", status: "ocupada", client: "Carlos Eduardo", time: "19:15", items: [{ name: "Combo Burger Craft + Fritas", qty: 2, price: 38.90 }, { name: "Chopp IPA Artesanal", qty: 2, price: 18.00 }] },
+            { id: 2, name: "Mesa 02", status: "ocupada", client: "Fernanda Lima", time: "19:30", items: [{ name: "Risoto de Cogumelos", qty: 1, price: 46.00 }, { name: "Suco Natural de Laranja", qty: 1, price: 9.50 }] },
             { id: 3, name: "Mesa 03", status: "livre", client: "-", time: "-", items: [] },
-            { id: 4, name: "Mesa 04", status: "ocupada", client: "Lucas Silva", time: "20:00", items: [{ name: "Batata Rústica", qty: 1, price: 28.00 }, { name: "Chopp IPA", qty: 1, price: 18.00 }] },
-            { id: 5, name: "Mesa 05", status: "conta", client: "Roberto Alves", time: "18:45", items: [{ name: "Dadinhos de Tapioca", qty: 2, price: 24.50 }, { name: "Chopp IPA", qty: 4, price: 18.00 }] },
+            { id: 4, name: "Mesa 04", status: "ocupada", client: "Lucas Silva", time: "20:00", items: [{ name: "Batata Rústica", qty: 1, price: 28.00 }, { name: "Chopp IPA Artesanal", qty: 1, price: 18.00 }] },
+            { id: 5, name: "Mesa 05", status: "conta", client: "Roberto Alves", time: "18:45", items: [{ name: "Dadinhos de Tapioca", qty: 2, price: 24.50 }, { name: "Chopp IPA Artesanal", qty: 4, price: 18.00 }] },
             { id: 6, name: "Mesa 06", status: "livre", client: "-", time: "-", items: [] },
             { id: 7, name: "Mesa 07", status: "livre", client: "-", time: "-", items: [] },
-            { id: 8, name: "Mesa 08", status: "ocupada", client: "Beatriz Ramos", time: "20:10", items: [{ name: "Combo Burger Craft", qty: 1, price: 38.90 }] },
+            { id: 8, name: "Mesa 08", status: "ocupada", client: "Beatriz Ramos", time: "20:10", items: [{ name: "Combo Burger Craft + Fritas", qty: 1, price: 38.90 }] },
             { id: 9, name: "Mesa 09", status: "livre", client: "-", time: "-", items: [] },
             { id: 10, name: "Mesa 10", status: "livre", client: "-", time: "-", items: [] },
             { id: 11, name: "Mesa 11", status: "livre", client: "-", time: "-", items: [] }
@@ -534,7 +584,7 @@
 
         // COZINHA & FILA
         let kdsOrders = [
-            { id: 101, mesa: "Mesa 04", item: "1x Batata Rústica com Gouda", time: "12 min", status: "pendente" },
+            { id: 101, mesa: "Mesa 04", item: "1x Batata Rústica", time: "12 min", status: "pendente" },
             { id: 102, mesa: "Mesa 08", item: "1x Combo Burger Craft", time: "5 min", status: "pendente" },
             { id: 103, mesa: "Mesa 01", item: "2x Chopp IPA Artesanal", time: "18 min", status: "preparo" },
             { id: 104, mesa: "Mesa 02", item: "1x Risoto de Cogumelos", time: "22 min", status: "pronto" }
@@ -548,10 +598,11 @@
         ];
 
         // INIT
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             const now = new Date();
             document.getElementById('currentDate').innerText = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
 
+            await carregarCardapioDoBanco();
             renderTablesGrid();
             renderSelectedMesaDetail();
             renderKDS();
@@ -560,7 +611,7 @@
             renderReportsTable();
         });
 
-        // TROCA DE ABAS (SEM PROMPT NAS MESAS)
+        // TROCA DE ABAS
         function switchTab(tabId) {
             if (tabId === 'menu') {
                 window.location.href = 'cad_cardapio.html';
@@ -603,6 +654,58 @@
         }
 
         // ================= GESTÃO DE MESAS & COMANDAS =================
+        function openManageTablesModal() {
+            document.getElementById('inputManageTablesQty').value = tables.length;
+            document.getElementById('manageTablesModal').classList.remove('hidden');
+        }
+
+        function closeManageTablesModal() {
+            document.getElementById('manageTablesModal').classList.add('hidden');
+        }
+
+        function confirmManageTables() {
+            let qtd = parseInt(document.getElementById('inputManageTablesQty').value);
+            if (!isNaN(qtd) && qtd > 0) {
+                // Trava de segurança: impede apagar mesas que estejam ocupadas, com conta ou com itens cadastrados
+                let mesasComProdutosAtivos = tables.filter(t => t.id > qtd && (t.status === 'ocupada' || t.status === 'conta' || t.items.length > 0));
+                
+                if (mesasComProdutosAtivos.length > 0) {
+                    let nomesMesas = mesasComProdutosAtivos.map(t => t.name).join(', ');
+                    alert(`Não é possível reduzir para ${qtd} mesas. As seguintes mesas possuem comanda aberta ou produtos lançados: ${nomesMesas}. Feche as contas dessas mesas antes de removê-las.`);
+                    return;
+                }
+
+                let novasMesas = [];
+                for (let i = 1; i <= qtd; i++) {
+                    let numeroFormatado = String(i).padStart(2, '0');
+                    let mesaExistente = tables.find(t => t.id === i);
+                    if (mesaExistente) {
+                        novasMesas.push(mesaExistente);
+                    } else {
+                        novasMesas.push({
+                            id: i,
+                            name: `Mesa ${numeroFormatado}`,
+                            status: "livre",
+                            client: "-",
+                            time: "-",
+                            items: []
+                        });
+                    }
+                }
+                tables = novasMesas;
+                if (selectedMesaId > tables.length) {
+                    selectedMesaId = 1;
+                }
+                salvarMesasStorage();
+                closeManageTablesModal();
+                renderTablesGrid();
+                renderSelectedMesaDetail();
+                showToast(`Mapa de mesas atualizado para ${qtd} mesas!`);
+            } else {
+                alert("Por favor, informe um número válido maior que zero.");
+            }
+        }
+
         function renderTablesGrid() {
             const grid = document.getElementById('tablesGrid');
             if (!grid) return;
@@ -681,13 +784,24 @@
             document.getElementById('selectedMesaTotal').innerText = `R$ ${calculateMesaTotal(mesa).toFixed(2).replace('.', ',')}`;
         }
 
-        function openAddItemToMesaModal() {
+        // FUNÇÃO ATUALIZADA: Busca itens diretamente da tabela 'cardapio' do banco de dados do Supabase
+        async function openAddItemToMesaModal() {
             const select = document.getElementById('selectProdMesa');
-            select.innerHTML = '';
-            menuItems.filter(m => m.active).forEach(m => {
-                select.innerHTML += `<option value="${m.id}">${m.name} - R$ ${m.price.toFixed(2)}</option>`;
-            });
+            select.innerHTML = '<option value="">Carregando produtos do banco...</option>';
             document.getElementById('addItemToMesaModal').classList.remove('hidden');
+
+            await carregarCardapioDoBanco();
+
+            select.innerHTML = '';
+            if (menuItems.length === 0) {
+                select.innerHTML = '<option value="">Nenhum item cadastrado no cardápio</option>';
+                return;
+            }
+
+            menuItems.forEach(m => {
+                const preco = m.preco_venda || 0;
+                select.innerHTML += `<option value="${m.id}" data-nome="${m.nome}" data-preco="${preco}">${m.nome} - R$ ${Number(preco).toFixed(2).replace('.', ',')}</option>`;
+            });
         }
 
         function closeAddItemToMesaModal() {
@@ -695,18 +809,26 @@
         }
 
         function confirmAddItemToMesa() {
-            const prodId = document.getElementById('selectProdMesa').value;
+            const select = document.getElementById('selectProdMesa');
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (!selectedOption || !selectedOption.value) {
+                alert("Selecione um produto válido.");
+                return;
+            }
+
+            const prodName = selectedOption.getAttribute('data-nome');
+            const prodPrice = parseFloat(selectedOption.getAttribute('data-preco'));
             const qty = parseInt(document.getElementById('qtyProdMesa').value);
-            const prod = menuItems.find(m => m.id == prodId);
             const mesa = tables.find(t => t.id === selectedMesaId);
 
-            if (prod && mesa) {
+            if (prodName && mesa) {
                 if (mesa.status === 'livre') {
                     mesa.status = 'ocupada';
                     mesa.client = 'Cliente Avulso';
                     mesa.time = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                 }
-                mesa.items.push({ name: prod.name, qty: qty, price: prod.price });
+                mesa.items.push({ name: prodName, qty: qty, price: prodPrice });
                 salvarMesasStorage();
 
                 closeAddItemToMesaModal();
