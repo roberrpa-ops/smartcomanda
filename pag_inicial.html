@@ -43,7 +43,7 @@
 <body class="h-full font-sans text-slate-100 bg-slate-900 antialiased flex flex-col md:flex-row overflow-hidden">
 
     <!-- SIDEBAR DE NAVEGAÇÃO -->
-    <aside class="w-full md:w-64 bg-slate-950 border-r border-slate-800 flex-shrink-0 flex flex-col justify-between z-20">
+    <aside id="appSidebar" class="w-full md:w-64 bg-slate-950 border-r border-slate-800 flex-shrink-0 flex flex-col justify-between z-20 transition-all duration-300">
         <div>
             <!-- Header Marca -->
             <div class="p-5 flex items-center justify-between border-b border-slate-800">
@@ -53,10 +53,12 @@
                     </div>
                     <div>
                         <h1 class="font-black text-base leading-none text-white tracking-wide">SmartComanda</h1>
-                        <span class="text-[10px] text-amber-400 font-semibold tracking-wider uppercase">Painel Gestor</span>
+                        <span class="text-[10px] text-amber-400 font-semibold tracking-wider uppercase" id="deviceIndicatorLabel">Painel Gestor</span>
                     </div>
                 </div>
-                <span class="md:hidden bg-amber-500/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-500/20">v2.4</span>
+                <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
             </div>
 
             <!-- Links de Navegação -->
@@ -77,7 +79,7 @@
                 <button onclick="switchTab('kds')" id="nav-kds" class="nav-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800/60 hover:text-white transition">
                     <i class="fa-solid fa-kitchen-set w-4 text-center"></i>
                     <span>Cozinha & Pedidos</span>
-                    <span class="ml-auto bg-rose-500 text-white font-bold text-[10px] px-1.5 py-0.2 rounded-full" id="pendingOrdersBadge">3</span>
+                    <span class="ml-auto bg-rose-500 text-white font-bold text-[10px] px-1.5 py-0.2 rounded-full" id="pendingOrdersBadge">0</span>
                 </button>
                 <button onclick="switchTab('waitlist')" id="nav-waitlist" class="nav-btn w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800/60 hover:text-white transition">
                     <i class="fa-solid fa-users-line w-4 text-center"></i>
@@ -102,7 +104,7 @@
                         <p class="text-xs font-bold text-slate-200">Gerente Geral</p>
                         <p class="text-[10px] text-emerald-400 flex items-center space-x-1">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
-                            <span>Sessão Ativa</span>
+                            <span id="deviceTypeLabel">Detectando...</span>
                         </p>
                     </div>
                 </div>
@@ -114,30 +116,35 @@
     </aside>
 
     <!-- CONTEÚDO PRINCIPAL (ÁREA DE TRABALHO) -->
-    <main class="flex-1 flex flex-col h-full overflow-hidden bg-slate-900">
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-slate-900 relative">
         
         <!-- Topbar Secundária -->
-        <header class="h-14 border-b border-slate-800 bg-slate-950/50 backdrop-blur-md px-6 flex items-center justify-between flex-shrink-0">
+        <header class="h-14 border-b border-slate-800 bg-slate-950/50 backdrop-blur-md px-4 md:px-6 flex items-center justify-between flex-shrink-0">
             <div class="flex items-center space-x-3">
-                <h2 id="pageTitle" class="text-sm font-extrabold text-white uppercase tracking-wider">Visão Geral & KPIs</h2>
-                <span class="text-slate-600">|</span>
-                <span id="currentDate" class="text-xs text-slate-400 font-medium"></span>
+                <!-- Botão Menu Mobile -->
+                <button onclick="toggleMobileSidebar()" class="md:hidden text-amber-400 p-1.5 bg-slate-800/80 rounded-lg border border-slate-700">
+                    <i class="fa-solid fa-bars text-sm"></i>
+                </button>
+                <h2 id="pageTitle" class="text-xs md:text-sm font-extrabold text-white uppercase tracking-wider truncate">Visão Geral & KPIs</h2>
+                <span class="text-slate-600 hidden sm:inline">|</span>
+                <span id="currentDate" class="text-xs text-slate-400 font-medium hidden sm:inline"></span>
             </div>
 
-            <div class="flex items-center space-x-3">
-                <button onclick="switchTab('reports')" class="bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center space-x-2">
+            <div class="flex items-center space-x-2 md:space-x-3">
+                <button onclick="switchTab('reports')" class="bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 transition hidden sm:flex items-center space-x-2">
                     <i class="fa-solid fa-receipt"></i>
-                    <span>Ver Histórico de Vendas</span>
+                    <span>Ver Histórico</span>
                 </button>
                 <button onclick="switchTab('menu')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg shadow-md transition flex items-center space-x-2">
                     <i class="fa-solid fa-book-open text-xs"></i>
-                    <span>Gestão do Cardápio</span>
+                    <span class="hidden sm:inline">Gestão do Cardápio</span>
+                    <span class="sm:hidden">Cardápio</span>
                 </button>
             </div>
         </header>
 
         <!-- ÁREA SCROLLÁVEL DAS ABAS -->
-        <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+        <div class="flex-1 overflow-y-auto p-3 md:p-6 space-y-6">
 
             <!-- ================= TAB 1: DASHBOARD & KPIS ================= -->
             <section id="tab-content-dashboard" class="space-y-6">
@@ -174,10 +181,10 @@
                     <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 flex items-center justify-between shadow-sm">
                         <div>
                             <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Pedidos na Cozinha</span>
-                            <p class="text-2xl font-black text-white mt-1" id="kpiPedidosAbertos">3 Em Espera</p>
+                            <p class="text-2xl font-black text-white mt-1" id="kpiPedidosAbertos">0 Em Espera</p>
                             <span class="text-[10px] text-rose-400 font-bold flex items-center space-x-1 mt-1">
                                 <i class="fa-solid fa-fire text-[9px]"></i>
-                                <span>2 com prioridade</span>
+                                <span>Fila ativa KDS</span>
                             </span>
                         </div>
                         <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center text-xl">
@@ -224,18 +231,6 @@
                                 </div>
                                 <button onclick="resolveAlert(this)" class="text-xs font-semibold text-slate-950 bg-amber-400 hover:bg-amber-300 px-3 py-1 rounded-lg transition">Atender</button>
                             </div>
-                            <div class="p-3 bg-slate-900 border border-emerald-500/30 rounded-xl flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 font-extrabold flex items-center justify-center text-xs">
-                                        M05
-                                    </div>
-                                    <div>
-                                        <p class="text-xs font-bold text-white">Mesa 05 solicitou: <strong class="text-emerald-400">Pedir a Conta</strong></p>
-                                        <p class="text-[10px] text-slate-400">Há 1 minuto</p>
-                                    </div>
-                                </div>
-                                <button onclick="resolveAlert(this)" class="text-xs font-semibold text-slate-950 bg-emerald-400 hover:bg-emerald-300 px-3 py-1 rounded-lg transition">Levar Conta</button>
-                            </div>
                         </div>
                     </div>
 
@@ -268,10 +263,21 @@
                                 <span class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span class="text-slate-300">Aguardando Conta</span></span>
                             </div>
                         </div>
-                        <button onclick="openManageTablesModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl shadow transition flex items-center space-x-2">
-                            <i class="fa-solid fa-sliders"></i>
-                            <span>Gerenciar Mesas (+ / -)</span>
-                        </button>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <!-- Configuração da Taxa de Serviço -->
+                            <div class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 flex items-center space-x-2">
+                                <span class="text-[11px] text-slate-300 font-semibold">Taxa:</span>
+                                <select id="taxaServicoSelect" onchange="alterarTaxaServico(this.value)" class="bg-slate-950 text-amber-400 text-xs font-bold rounded px-2 py-1 border border-slate-700 focus:outline-none">
+                                    <option value="10">10%</option>
+                                    <option value="5">5%</option>
+                                    <option value="0">0%</option>
+                                </select>
+                            </div>
+                            <button onclick="openManageTablesModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl shadow transition flex items-center space-x-2">
+                                <i class="fa-solid fa-sliders"></i>
+                                <span>Mesas (+/-)</span>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-3" id="tablesGrid">
@@ -280,14 +286,14 @@
                 </div>
 
                 <!-- Painel Detalhado da Mesa Selecionada -->
-                <div id="tableDetailCard" class="bg-slate-800/90 border border-slate-700 rounded-2xl p-5 shadow-2xl">
+                <div id="tableDetailCard" class="bg-slate-800/90 border border-slate-700 rounded-2xl p-4 md:p-5 shadow-2xl">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-700 pb-4 gap-3">
                         <div>
                             <div class="flex items-center space-x-3">
                                 <h2 class="text-xl font-black text-white" id="selectedMesaName">Mesa 01</h2>
                                 <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold px-2.5 py-0.5 rounded-full" id="selectedMesaStatus">Ocupada</span>
                             </div>
-                            <p class="text-xs text-slate-400 mt-1">Cliente Responsável: <strong class="text-slate-200" id="selectedMesaClient">Carlos Eduardo</strong> • Aberta às <span id="selectedMesaTime">19:15</span></p>
+                            <p class="text-xs text-slate-400 mt-1">Cliente: <strong class="text-slate-200" id="selectedMesaClient">Carlos Eduardo</strong> • Aberta às <span id="selectedMesaTime">19:15</span></p>
                         </div>
 
                         <div class="flex items-center space-x-2 w-full md:w-auto">
@@ -295,7 +301,7 @@
                                 <i class="fa-solid fa-plus text-amber-400"></i>
                                 <span>Adicionar Item</span>
                             </button>
-                            <button onclick="closeComandaModal()" class="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl shadow transition flex items-center justify-center space-x-1.5">
+                            <button onclick="openCheckoutModal()" class="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl shadow transition flex items-center justify-center space-x-1.5">
                                 <i class="fa-solid fa-receipt"></i>
                                 <span>Fechar & Cobrar</span>
                             </button>
@@ -310,7 +316,7 @@
                         </div>
 
                         <div class="mt-4 pt-3 border-t border-slate-700 flex justify-between items-center">
-                            <span class="text-xs text-slate-400">Total Acumulado (+10% taxa)</span>
+                            <span class="text-xs text-slate-400" id="labelTotalTaxa">Total Acumulado (+10% taxa)</span>
                             <span class="text-2xl font-black text-amber-400" id="selectedMesaTotal">R$ 0,00</span>
                         </div>
                     </div>
@@ -321,7 +327,7 @@
             <section id="tab-content-kds" class="hidden space-y-4">
                 <div class="flex justify-between items-center">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Fila da Cozinha / KDS</h3>
-                    <span class="text-xs text-slate-400">Clique no card para avançar o status</span>
+                    <span class="text-xs text-slate-400">Toque no card para avançar status</span>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -368,7 +374,7 @@
                 <div class="flex justify-between items-center bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80">
                     <div>
                         <h3 class="font-bold text-sm text-white">Recepção & Lista de Espera</h3>
-                        <p class="text-xs text-slate-400">Gerencie clientes aguardando por mesa disponível</p>
+                        <p class="text-xs text-slate-400">Gerencie clientes aguardando por mesa</p>
                     </div>
                     <button onclick="openAddWaitlistModal()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs px-4 py-2 rounded-xl shadow transition flex items-center space-x-2">
                         <i class="fa-solid fa-user-plus"></i>
@@ -397,12 +403,12 @@
                 </div>
             </section>
 
-            <!-- ================= TAB 6: RELATÓRIOS & HISTÓRICO GERENCIAL ================= -->
+            <!-- ================= TAB 6: RELATÓRIOS & HISTÓRICO ================= -->
             <section id="tab-content-reports" class="hidden space-y-5">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 gap-3">
                     <div>
-                        <h3 class="font-bold text-sm text-white">Histórico de Comandas Fechadas (Gerencial)</h3>
-                        <p class="text-xs text-slate-400">Consumo salvo automaticamente após cada fechamento de mesa</p>
+                        <h3 class="font-bold text-sm text-white">Histórico de Comandas Fechadas</h3>
+                        <p class="text-xs text-slate-400">Salvo automaticamente após fechamento de mesas</p>
                     </div>
                     <div class="flex items-center space-x-2 w-full sm:w-auto">
                         <button onclick="exportarHistoricoCSV()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow transition flex items-center justify-center space-x-1.5">
@@ -411,7 +417,7 @@
                         </button>
                         <button onclick="limparHistorico()" class="flex-1 sm:flex-none bg-rose-600/20 text-rose-400 hover:bg-rose-600 hover:text-white font-bold text-xs px-3.5 py-2 rounded-xl border border-rose-500/30 transition flex items-center justify-center space-x-1.5">
                             <i class="fa-solid fa-trash"></i>
-                            <span>Limpar Histórico</span>
+                            <span>Limpar</span>
                         </button>
                     </div>
                 </div>
@@ -439,30 +445,72 @@
         </div>
     </main>
 
-    <!-- MODAL: GERENCIAR QUANTIDADE DE MESAS -->
-    <div id="manageTablesModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center hidden p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
+    <!-- MODAL: FECHAR & COBRAR -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-5 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="font-bold text-white text-sm">Gerenciar Quantidade de Mesas</h3>
-                <button onclick="closeManageTablesModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                <h3 class="font-bold text-white text-sm">Fechar Conta & Pagamento</h3>
+                <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <div class="space-y-3">
-                <p class="text-xs text-slate-400">Informe a quantidade total de mesas desejadas para o salão:</p>
+            <div class="space-y-4 text-xs">
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex justify-between text-slate-400">
+                        <span>Subtotal Consumo:</span>
+                        <span id="checkoutSubtotal" class="text-white font-bold">R$ 0,00</span>
+                    </div>
+                    <div class="flex justify-between text-slate-400">
+                        <span id="checkoutTaxaLabel">Taxa de Serviço (10%):</span>
+                        <span id="checkoutTaxaValor" class="text-white font-bold">R$ 0,00</span>
+                    </div>
+                    <div class="border-t border-slate-800 pt-2 flex justify-between items-center text-sm font-black text-amber-400">
+                        <span>Total a Pagar:</span>
+                        <span id="checkoutTotalGeral" class="text-lg">R$ 0,00</span>
+                    </div>
+                </div>
+
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Quantidade de Mesas</label>
-                    <input type="number" id="inputManageTablesQty" min="1" max="50" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Forma de Pagamento</label>
+                    <select id="checkoutFormaPagamento" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                        <option value="Cartão de Crédito">Cartão de Crédito</option>
+                        <option value="Cartão de Débito">Cartão de Débito</option>
+                        <option value="Pix">Pix</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                    </select>
                 </div>
 
                 <div class="flex space-x-2 pt-2 border-t border-slate-800">
-                    <button onclick="closeManageTablesModal()" class="flex-1 bg-slate-800 text-slate-300 font-semibold py-2.5 rounded-xl text-xs hover:bg-slate-700 transition">Cancelar</button>
-                    <button onclick="confirmManageTables()" class="flex-1 bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs hover:bg-amber-400 transition">Atualizar Mesas</button>
+                    <button onclick="closeCheckoutModal()" class="flex-1 bg-slate-800 text-slate-300 font-semibold py-2.5 rounded-xl hover:bg-slate-700 transition">Cancelar</button>
+                    <button onclick="confirmCheckout()" class="flex-1 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-500 transition shadow">Confirmar Pagamento</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: ADICIONAR CLIENTE À FILA DE ESPERA -->
+    <!-- MODAL: GERENCIAR MESAS -->
+    <div id="manageTablesModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-white text-sm">Gerenciar Mesas</h3>
+                <button onclick="closeManageTablesModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="space-y-3">
+                <p class="text-xs text-slate-400">Informe o total de mesas no salão:</p>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Quantidade</label>
+                    <input type="number" id="inputManageTablesQty" min="1" max="50" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+
+                <div class="flex space-x-2 pt-2 border-t border-slate-800">
+                    <button onclick="closeManageTablesModal()" class="flex-1 bg-slate-800 text-slate-300 font-semibold py-2.5 rounded-xl text-xs hover:bg-slate-700 transition">Cancelar</button>
+                    <button onclick="confirmManageTables()" class="flex-1 bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs hover:bg-amber-400 transition">Atualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: FILA DE ESPERA -->
     <div id="waitlistModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center hidden p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -472,30 +520,30 @@
 
             <form onsubmit="saveWaitlistClient(event)" class="space-y-3">
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nome do Cliente</label>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nome</label>
                     <input type="text" id="waitName" required placeholder="Ex: Mariana Costa" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Qtd Pessoas</label>
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Pessoas</label>
                         <input type="number" id="waitPeople" min="1" value="2" required class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Telefone (WhatsApp)</label>
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">WhatsApp</label>
                         <input type="text" id="waitPhone" placeholder="(11) 99999-9999" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
                     </div>
                 </div>
 
                 <div class="flex space-x-2 pt-2 border-t border-slate-800">
                     <button type="button" onclick="closeWaitlistModal()" class="flex-1 bg-slate-800 text-slate-300 font-semibold py-2.5 rounded-xl text-xs hover:bg-slate-700 transition">Cancelar</button>
-                    <button type="submit" class="flex-1 bg-sky-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs hover:bg-sky-400 transition">Adicionar à Fila</button>
+                    <button type="submit" class="flex-1 bg-sky-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs hover:bg-sky-400 transition">Adicionar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL: ADICIONAR ITEM NA COMANDA DA MESA -->
+    <!-- MODAL: ADICIONAR ITEM NA MESA -->
     <div id="addItemToMesaModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center hidden p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -505,9 +553,9 @@
 
             <div class="space-y-3">
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Selecionar Produto (Cardápio)</label>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Produto (Cardápio)</label>
                     <select id="selectProdMesa" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl text-xs p-2.5 focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                        <option value="">Carregando itens do banco...</option>
+                        <option value="">Carregando itens...</option>
                     </select>
                 </div>
                 <div>
@@ -517,7 +565,7 @@
 
                 <div class="flex space-x-2 pt-2 border-t border-slate-800">
                     <button onclick="closeAddItemToMesaModal()" class="flex-1 bg-slate-800 text-slate-300 font-semibold py-2.5 rounded-xl text-xs hover:bg-slate-700 transition">Cancelar</button>
-                    <button onclick="confirmAddItemToMesa()" class="flex-1 bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs hover:bg-amber-400 transition">Lançar Item</button>
+                    <button onclick="confirmAddItemToMesa()" class="flex-1 bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs hover:bg-amber-400 transition">Lançar</button>
                 </div>
             </div>
         </div>
@@ -529,17 +577,37 @@
         <span id="toastMsg">Ação concluída</span>
     </div>
 
-    <!-- JAVASCRIPT COM SUPABASE, LOCALSTORAGE E HISTÓRICO GERENCIAL -->
+    <!-- JAVASCRIPT: SUPABASE, LOCALSTORAGE, KDS & DETECÇÃO DE DISPOSITIVO -->
     <script>
-        // CONFIGURAÇÃO DO SUPABASE (Insira sua URL e chave publica/anon do seu projeto)
+        // CONFIGURAÇÃO DO SUPABASE
         const SUPABASE_URL = 'https://ubtgyzcdvumfxgujpshz.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_eH09_dM0w0DreGw8JOx7mg_P1w3rZGC';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let selectedMesaId = 1;
-
-        // CARDÁPIO CARREGADO DO BANCO DE DADOS (tabela: cardapio)
+        let taxaServicoPercentual = parseInt(localStorage.getItem('smartcomanda_taxa')) || 10;
         let menuItems = [];
+
+        // DETECÇÃO DE DISPOSITIVO (CELULAR VS PC) E ADAPTAÇÃO DE VISUALIZAÇÃO
+        function detectarDispositivoEOtimizar() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+            const deviceLabel = document.getElementById('deviceTypeLabel');
+            const sidebar = document.getElementById('appSidebar');
+
+            if (isMobile) {
+                if (deviceLabel) deviceLabel.innerText = "Modo Mobile Ativo";
+                // Em celulares, recolhemos a sidebar inicialmente para maximizar a área útil da tela
+                sidebar.classList.add('hidden');
+            } else {
+                if (deviceLabel) deviceLabel.innerText = "Modo Desktop Ativo";
+                sidebar.classList.remove('hidden');
+            }
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('appSidebar');
+            sidebar.classList.toggle('hidden');
+        }
 
         async function carregarCardapioDoBanco() {
             try {
@@ -548,8 +616,7 @@
                     .select('*');
                 
                 if (error) {
-                    console.error('Erro ao buscar cardápio do Supabase:', error);
-                    // Fallback local caso ocorra erro na conexão
+                    console.error('Erro ao buscar cardápio:', error);
                     menuItems = [
                         { id: 1, nome: "Combo Burger Craft + Fritas", preco_venda: 38.90 },
                         { id: 2, nome: "Batata Rústica", preco_venda: 28.00 },
@@ -559,11 +626,10 @@
                     menuItems = data;
                 }
             } catch (err) {
-                console.error('Erro de conexão com o Supabase:', err);
+                console.error('Erro de conexão Supabase:', err);
             }
         }
 
-        // CARREGAR MESAS DO LOCALSTORAGE OU GERAR 11 MESAS COMO PADRÃO
         let tables = JSON.parse(localStorage.getItem('smartcomanda_tables')) || [
             { id: 1, name: "Mesa 01", status: "ocupada", client: "Carlos Eduardo", time: "19:15", items: [{ name: "Combo Burger Craft + Fritas", qty: 2, price: 38.90 }, { name: "Chopp IPA Artesanal", qty: 2, price: 18.00 }] },
             { id: 2, name: "Mesa 02", status: "ocupada", client: "Fernanda Lima", time: "19:30", items: [{ name: "Risoto de Cogumelos", qty: 1, price: 46.00 }, { name: "Suco Natural de Laranja", qty: 1, price: 9.50 }] },
@@ -582,13 +648,16 @@
             localStorage.setItem('smartcomanda_tables', JSON.stringify(tables));
         }
 
-        // COZINHA & FILA
-        let kdsOrders = [
+        let kdsOrders = JSON.parse(localStorage.getItem('smartcomanda_kds')) || [
             { id: 101, mesa: "Mesa 04", item: "1x Batata Rústica", time: "12 min", status: "pendente" },
             { id: 102, mesa: "Mesa 08", item: "1x Combo Burger Craft", time: "5 min", status: "pendente" },
             { id: 103, mesa: "Mesa 01", item: "2x Chopp IPA Artesanal", time: "18 min", status: "preparo" },
             { id: 104, mesa: "Mesa 02", item: "1x Risoto de Cogumelos", time: "22 min", status: "pronto" }
         ];
+
+        function salvarKDSStorage() {
+            localStorage.setItem('smartcomanda_kds', JSON.stringify(kdsOrders));
+        }
 
         let waitlist = [
             { id: 1, name: "Juliana Mendes", people: 4, time: "15 min", phone: "(11) 98888-1122", status: "aguardando" },
@@ -602,6 +671,10 @@
             const now = new Date();
             document.getElementById('currentDate').innerText = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
 
+            const taxaSelect = document.getElementById('taxaServicoSelect');
+            if (taxaSelect) taxaSelect.value = taxaServicoPercentual;
+
+            detectarDispositivoEOtimizar();
             await carregarCardapioDoBanco();
             renderTablesGrid();
             renderSelectedMesaDetail();
@@ -610,6 +683,18 @@
             renderDashWaitlistSummary();
             renderReportsTable();
         });
+
+        window.addEventListener('resize', () => {
+            // Reajusta caso redimensione a janela
+            // detectarDispositivoEOtimizar();
+        });
+
+        function alterarTaxaServico(valor) {
+            taxaServicoPercentual = parseInt(valor);
+            localStorage.setItem('smartcomanda_taxa', taxaServicoPercentual);
+            renderSelectedMesaDetail();
+            showToast(`Taxa alterada para ${taxaServicoPercentual}%`);
+        }
 
         // TROCA DE ABAS
         function switchTab(tabId) {
@@ -639,6 +724,11 @@
                 }
             });
 
+            // Se for mobile, fecha a sidebar ao trocar de aba para maximizar o espaço
+            if (window.innerWidth < 768) {
+                document.getElementById('appSidebar').classList.add('hidden');
+            }
+
             if (tabId === 'tables') {
                 renderTablesGrid();
                 renderSelectedMesaDetail();
@@ -653,7 +743,7 @@
             }
         }
 
-        // ================= GESTÃO DE MESAS & COMANDAS =================
+        // ================= GESTÃO DE MESAS =================
         function openManageTablesModal() {
             document.getElementById('inputManageTablesQty').value = tables.length;
             document.getElementById('manageTablesModal').classList.remove('hidden');
@@ -666,12 +756,11 @@
         function confirmManageTables() {
             let qtd = parseInt(document.getElementById('inputManageTablesQty').value);
             if (!isNaN(qtd) && qtd > 0) {
-                // Trava de segurança: impede apagar mesas que estejam ocupadas, com conta ou com itens cadastrados
                 let mesasComProdutosAtivos = tables.filter(t => t.id > qtd && (t.status === 'ocupada' || t.status === 'conta' || t.items.length > 0));
                 
                 if (mesasComProdutosAtivos.length > 0) {
                     let nomesMesas = mesasComProdutosAtivos.map(t => t.name).join(', ');
-                    alert(`Não é possível reduzir para ${qtd} mesas. As seguintes mesas possuem comanda aberta ou produtos lançados: ${nomesMesas}. Feche as contas dessas mesas antes de removê-las.`);
+                    alert(`Não é possível reduzir para ${qtd} mesas. Mesas com comanda ativa: ${nomesMesas}.`);
                     return;
                 }
 
@@ -693,16 +782,14 @@
                     }
                 }
                 tables = novasMesas;
-                if (selectedMesaId > tables.length) {
-                    selectedMesaId = 1;
-                }
+                if (selectedMesaId > tables.length) selectedMesaId = 1;
                 salvarMesasStorage();
                 closeManageTablesModal();
                 renderTablesGrid();
                 renderSelectedMesaDetail();
-                showToast(`Mapa de mesas atualizado para ${qtd} mesas!`);
+                showToast(`Salão atualizado para ${qtd} mesas!`);
             } else {
-                alert("Por favor, informe um número válido maior que zero.");
+                alert("Informe um número válido.");
             }
         }
 
@@ -748,9 +835,13 @@
             renderSelectedMesaDetail();
         }
 
+        function calculateMesaSubtotal(mesa) {
+            return mesa.items.reduce((acc, i) => acc + (i.price * i.qty), 0);
+        }
+
         function calculateMesaTotal(mesa) {
-            const subtotal = mesa.items.reduce((acc, i) => acc + (i.price * i.qty), 0);
-            return subtotal * 1.10; // Taxa de serviço 10%
+            const subtotal = calculateMesaSubtotal(mesa);
+            return subtotal + (subtotal * (taxaServicoPercentual / 100));
         }
 
         function renderSelectedMesaDetail() {
@@ -781,10 +872,11 @@
                 });
             }
 
+            document.getElementById('labelTotalTaxa').innerText = taxaServicoPercentual > 0 ? `Total Acumulado (+${taxaServicoPercentual}% taxa)` : `Total Acumulado (Sem taxa)`;
             document.getElementById('selectedMesaTotal').innerText = `R$ ${calculateMesaTotal(mesa).toFixed(2).replace('.', ',')}`;
         }
 
-        // FUNÇÃO ATUALIZADA: Busca itens diretamente da tabela 'cardapio' do banco de dados do Supabase
+        // ADICIONAR ITEM DA MESA (BUSCA DO BANCO)
         async function openAddItemToMesaModal() {
             const select = document.getElementById('selectProdMesa');
             select.innerHTML = '<option value="">Carregando produtos do banco...</option>';
@@ -831,19 +923,56 @@
                 mesa.items.push({ name: prodName, qty: qty, price: prodPrice });
                 salvarMesasStorage();
 
+                kdsOrders.push({
+                    id: Date.now(),
+                    mesa: mesa.name,
+                    item: `${qty}x ${prodName}`,
+                    time: "Agora",
+                    status: "pendente"
+                });
+                salvarKDSStorage();
+                renderKDS();
+
                 closeAddItemToMesaModal();
                 renderTablesGrid();
                 renderSelectedMesaDetail();
-                showToast(`Item adicionado à ${mesa.name}`);
+                showToast(`Item enviado para a Cozinha e lançado na ${mesa.name}!`, 'fa-fire-burner');
             }
         }
 
-        function closeComandaModal() {
+        // CHECKOUT & PAGAMENTO
+        function openCheckoutModal() {
             const mesa = tables.find(t => t.id === selectedMesaId);
-            if (mesa && mesa.status !== 'livre' && mesa.items.length > 0) {
-                const total = calculateMesaTotal(mesa);
+            if (!mesa || mesa.items.length === 0) {
+                showToast('Esta mesa não possui consumos para cobrar!', 'fa-triangle-exclamation');
+                return;
+            }
 
-                // SALVA NO HISTÓRICO GERENCIAL
+            const subtotal = calculateMesaSubtotal(mesa);
+            const taxaValor = subtotal * (taxaServicoPercentual / 100);
+            const totalGeral = subtotal + taxaValor;
+
+            document.getElementById('checkoutSubtotal').innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+            document.getElementById('checkoutTaxaLabel').innerText = `Taxa de Serviço (${taxaServicoPercentual}%):`;
+            document.getElementById('checkoutTaxaValor').innerText = `R$ ${taxaValor.toFixed(2).replace('.', ',')}`;
+            document.getElementById('checkoutTotalGeral').innerText = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
+
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        function confirmCheckout() {
+            const mesa = tables.find(t => t.id === selectedMesaId);
+            const formaPagamento = document.getElementById('checkoutFormaPagamento').value;
+
+            if (mesa && mesa.items.length > 0) {
+                const subtotal = calculateMesaSubtotal(mesa);
+                const taxaValor = subtotal * (taxaServicoPercentual / 100);
+                const totalGeral = subtotal + taxaValor;
+
                 let historico = JSON.parse(localStorage.getItem('smartcomanda_historico_vendas')) || [];
                 historico.push({
                     mesa: mesa.name,
@@ -851,27 +980,91 @@
                     abertura: mesa.time,
                     fechamento: new Date().toLocaleString('pt-BR'),
                     itens: mesa.items,
-                    totalGeral: total
+                    subtotal: subtotal,
+                    taxaServico: taxaValor,
+                    totalGeral: totalGeral,
+                    formaPagamento: formaPagamento
                 });
                 localStorage.setItem('smartcomanda_historico_vendas', JSON.stringify(historico));
 
-                // LIMPA A MESA
                 mesa.status = 'livre';
                 mesa.client = '-';
                 mesa.time = '-';
                 mesa.items = [];
                 salvarMesasStorage();
 
+                closeCheckoutModal();
                 renderTablesGrid();
                 renderSelectedMesaDetail();
                 renderReportsTable();
-                showToast(`Comanda fechada! R$ ${total.toFixed(2).replace('.', ',')} salvo no histórico.`, 'fa-receipt');
-            } else {
-                showToast('A mesa já está livre ou não possui itens!', 'fa-triangle-exclamation');
+                showToast(`Conta da ${mesa.name} paga via ${formaPagamento}! R$ ${totalGeral.toFixed(2).replace('.', ',')}`, 'fa-receipt');
             }
         }
 
-        // ================= RELATÓRIOS & HISTÓRICO GERENCIAL =================
+        // ================= KDS / COZINHA =================
+        function renderKDS() {
+            const pendenteList = document.getElementById('kdsPendenteList');
+            const preparoList = document.getElementById('kdsPreparoList');
+            const prontoList = document.getElementById('kdsProntoList');
+            if (!pendenteList) return;
+
+            pendenteList.innerHTML = '';
+            preparoList.innerHTML = '';
+            prontoList.innerHTML = '';
+
+            let countP = 0, countPrep = 0, countPr = 0;
+
+            kdsOrders.forEach(order => {
+                const card = `
+                    <div onclick="advanceKDS(${order.id})" class="p-3 bg-slate-900 border border-slate-700/80 rounded-xl hover:border-amber-400 cursor-pointer transition space-y-1.5 shadow group">
+                        <div class="flex justify-between items-center">
+                            <span class="font-extrabold text-xs text-white group-hover:text-amber-400">${order.mesa}</span>
+                            <span class="text-[10px] font-semibold text-slate-400"><i class="fa-solid fa-clock text-[9px]"></i> ${order.time}</span>
+                        </div>
+                        <p class="text-xs font-bold text-amber-400">${order.item}</p>
+                    </div>
+                `;
+
+                if (order.status === 'pendente') {
+                    pendenteList.innerHTML += card;
+                    countP++;
+                } else if (order.status === 'preparo') {
+                    preparoList.innerHTML += card;
+                    countPrep++;
+                } else if (order.status === 'pronto') {
+                    prontoList.innerHTML += card;
+                    countPr++;
+                }
+            });
+
+            document.getElementById('countKdsPendente').innerText = countP;
+            document.getElementById('countKdsPreparo').innerText = countPrep;
+            document.getElementById('countKdsPronto').innerText = countPr;
+            document.getElementById('pendingOrdersBadge').innerText = countP;
+            
+            const kpiPedidos = document.getElementById('kpiPedidosAbertos');
+            if (kpiPedidos) kpiPedidos.innerText = `${countP} Em Espera`;
+        }
+
+        function advanceKDS(id) {
+            const order = kdsOrders.find(o => o.id === id);
+            if (order) {
+                if (order.status === 'pendente') {
+                    order.status = 'preparo';
+                    showToast(`Pedido #${id} em preparo`, 'fa-fire');
+                } else if (order.status === 'preparo') {
+                    order.status = 'pronto';
+                    showToast(`Pedido #${id} pronto!`, 'fa-check');
+                } else {
+                    kdsOrders = kdsOrders.filter(o => o.id !== id);
+                    showToast(`Pedido #${id} entregue!`, 'fa-utensils');
+                }
+                salvarKDSStorage();
+                renderKDS();
+            }
+        }
+
+        // ================= RELATÓRIOS & HISTÓRICO =================
         function renderReportsTable() {
             const tbody = document.getElementById('reportsTableBody');
             if (!tbody) return;
@@ -890,7 +1083,7 @@
                     <tr class="hover:bg-slate-800/50 transition">
                         <td class="p-4">
                             <div class="font-bold text-white text-xs">${h.mesa}</div>
-                            <div class="text-[10px] text-slate-400">Cliente: ${h.cliente}</div>
+                            <div class="text-[10px] text-slate-400">Cliente: ${h.cliente} • Pgto: ${h.formaPagamento || 'Cartão'}</div>
                         </td>
                         <td class="p-4 text-slate-400 text-xs">
                             <div>${h.fechamento}</div>
@@ -908,90 +1101,36 @@
         }
 
         function limparHistorico() {
-            if (confirm("Tem certeza que deseja apagar todo o histórico de vendas salvo? Esta ação não pode ser desfeita.")) {
+            if (confirm("Apagar todo o histórico de vendas salvo?")) {
                 localStorage.removeItem('smartcomanda_historico_vendas');
                 renderReportsTable();
-                showToast('Histórico de vendas limpo com sucesso!', 'fa-trash');
+                showToast('Histórico limpo!', 'fa-trash');
             }
         }
 
         function exportarHistoricoCSV() {
             let historico = JSON.parse(localStorage.getItem('smartcomanda_historico_vendas')) || [];
             if (historico.length === 0) {
-                alert("Não há dados no histórico para exportar.");
+                alert("Sem dados para exportar.");
                 return;
             }
 
-            let csvContent = "data:text/csv;charset=utf-8,Mesa;Cliente;Horario Abertura;Data Fechamento;Itens Consumidos;Total Geral (R$)\n";
+            let csvContent = "data:text/csv;charset=utf-8,Mesa;Cliente;Forma Pagamento;Horario Abertura;Data Fechamento;Itens Consumidos;Total Geral (R$)\n";
 
             historico.forEach(h => {
                 let itensStr = h.itens.map(i => `${i.qty}x ${i.name}`).join(' | ');
-                let row = `"${h.mesa}","${h.cliente}","${h.abertura}","${h.fechamento}","${itensStr}","${h.totalGeral.toFixed(2)}"`;
+                let row = `"${h.mesa}","${h.cliente}","${h.formaPagamento || 'Cartão'}","${h.abertura}","${h.fechamento}","${itensStr}","${h.totalGeral.toFixed(2)}"`;
                 csvContent += row + "\r\n";
             });
 
             let encodedUri = encodeURI(csvContent);
             let link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `historico_vendas_smartcomanda_${new Date().toISOString().slice(0,10)}.csv`);
+            link.setAttribute("download", `historico_vendas_${new Date().toISOString().slice(0,10)}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            showToast('Relatório CSV exportado com sucesso!', 'fa-file-excel');
-        }
-
-        // ================= KDS / COZINHA =================
-        function renderKDS() {
-            const pendenteList = document.getElementById('kdsPendenteList');
-            const preparoList = document.getElementById('kdsPreparoList');
-            const prontoList = document.getElementById('kdsProntoList');
-            if (!pendenteList) return;
-
-            pendenteList.innerHTML = '';
-            preparoList.innerHTML = '';
-            prontoList.innerHTML = '';
-
-            let countP = 0, countPrep = 0, countPr = 0;
-
-            kdsOrders.forEach(order => {
-                const card = `
-                    <div onclick="advanceKDS(${order.id})" class="p-3 bg-slate-900 border border-slate-700/80 rounded-xl hover:border-amber-400 cursor-pointer transition space-y-1.5 shadow">
-                        <div class="flex justify-between items-center">
-                            <span class="font-extrabold text-xs text-white">${order.mesa}</span>
-                            <span class="text-[10px] font-semibold text-slate-400"><i class="fa-solid fa-clock text-[9px]"></i> ${order.time}</span>
-                        </div>
-                        <p class="text-xs font-bold text-amber-400">${order.item}</p>
-                    </div>
-                `;
-
-                if (order.status === 'pendente') {
-                    pendenteList.innerHTML += card;
-                    countP++;
-                } else if (order.status === 'preparo') {
-                    preparoList.innerHTML += card;
-                    countPrep++;
-                } else {
-                    prontoList.innerHTML += card;
-                    countPr++;
-                }
-            });
-
-            document.getElementById('countKdsPendente').innerText = countP;
-            document.getElementById('countKdsPreparo').innerText = countPrep;
-            document.getElementById('countKdsPronto').innerText = countPr;
-            document.getElementById('pendingOrdersBadge').innerText = countP;
-        }
-
-        function advanceKDS(id) {
-            const order = kdsOrders.find(o => o.id === id);
-            if (order) {
-                if (order.status === 'pendente') order.status = 'preparo';
-                else if (order.status === 'preparo') order.status = 'pronto';
-                else kdsOrders = kdsOrders.filter(o => o.id !== id);
-
-                renderKDS();
-                showToast(`Pedido #${id} avançado!`);
-            }
+            showToast('CSV exportado!', 'fa-file-excel');
         }
 
         // ================= FILA DE ESPERA =================
@@ -1074,7 +1213,7 @@
             closeWaitlistModal();
             renderWaitlist();
             renderDashWaitlistSummary();
-            showToast('Cliente inserido na fila de espera!');
+            showToast('Cliente inserido na fila!');
         }
 
         function callWaitlistClient(id) {
@@ -1083,7 +1222,7 @@
                 client.status = "chamado";
                 renderWaitlist();
                 renderDashWaitlistSummary();
-                showToast(`Cliente ${client.name} chamado para acomodação!`, 'fa-bullhorn');
+                showToast(`Cliente ${client.name} chamado!`, 'fa-bullhorn');
             }
         }
 
@@ -1091,15 +1230,14 @@
             waitlist = waitlist.filter(w => w.id !== id);
             renderWaitlist();
             renderDashWaitlistSummary();
-            showToast('Cliente removido da fila', 'fa-trash');
+            showToast('Removido da fila', 'fa-trash');
         }
 
         function resolveAlert(btn) {
             btn.parentElement.remove();
-            showToast('Atendimento registrado e concluído!');
+            showToast('Atendimento concluído!');
         }
 
-        // TOAST NOTIFICATION
         function showToast(message, icon = 'fa-circle-check') {
             const toast = document.getElementById('toast');
             document.getElementById('toastMsg').innerText = message;
